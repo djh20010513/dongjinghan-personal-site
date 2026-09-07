@@ -12,7 +12,7 @@
 - **Clickable objects** — e.g. click the desk lamp to switch it on/off; double-click anything to focus
 - **💻 Internship player** — ByteDance · Xiaohongshu · Bilibili, playing on the 3D monitor
 - **🏷️ Skill sticky notes** — Business Insight / Vibe Coding / AI Tech, pinned on the blackboard
-- **📋 Paper board** — 4 SCI papers with covers, DOI stickers and a projector view
+- **📋 Paper board** — 5 SCI papers with covers, DOI stickers and a projector view
 - **📄 Desk-frame résumé** — view & download the PDF
 - **📱 Phone contact card** — phone, email, site & GitHub
 - **🗺️ Education map** — ECNU & Shanghai Ocean University, pinned in Shanghai

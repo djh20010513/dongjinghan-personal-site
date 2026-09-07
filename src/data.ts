@@ -346,6 +346,6 @@ export const HONORS = [
   "🎓 First-Class Postgraduate Scholarship · 研究生一等奖学金",
   "🏅 Shanghai Outstanding Graduate · 上海市优秀毕业生",
   "💼 ByteDance · Xiaohongshu · Bilibili — AI Product Manager",
-  "📄 4 SCI papers (2 as first author) · 4 篇 SCI（2 篇一作）",
+  "📄 5 SCI papers · 5 篇 SCI 论文",
   "💻 Claude Code · WorkBuddy · Coze · Figma",
 ];

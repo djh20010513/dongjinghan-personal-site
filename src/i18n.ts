@@ -58,7 +58,7 @@ export const ABOUT = {
   facts: [
     l("💼 AI PM · ByteDance / Xiaohongshu / Bilibili", "💼 AI 产品经理 · 字节跳动 / 小红书 / 哔哩哔哩"),
     l("🎓 M.Eng., ECNU (AI + Water) · GPA 3.80/4.0", "🎓 华东师范大学硕士（AI+水利）· GPA 3.80/4.0"),
-    l("📄 4 SCI papers, 2 as first author", "📄 4 篇 SCI 论文，2 篇一作"),
+    l("📄 5 SCI papers", "📄 5 篇 SCI 论文"),
     l("📍 Shanghai 上海", "📍 上海 Shanghai"),
     l("✉️ djh1721695188@163.com", "✉️ djh1721695188@163.com"),
   ],

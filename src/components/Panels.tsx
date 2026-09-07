@@ -19,7 +19,7 @@ export function WelcomeOverlay({ onClose }: { onClose: () => void }) {
           <div>💻 <b>Computer</b> — sit down &amp; browse my internships</div>
           <div>🏷️ <b>Sticky notes</b> — my skill tags</div>
           <div>🗺️ <b>World map</b> — my education journey</div>
-          <div>📋 <b>Blackboard</b> — 4 SCI papers &amp; DOI stickers</div>
+          <div>📋 <b>Blackboard</b> — 5 SCI papers &amp; DOI stickers</div>
           <div>📄 <b>Desk frame</b> — my résumé</div>
           <div>📱 <b>Phone</b> — contact me</div>
           <div>🏆 <b>Trophies</b> — awards &amp; honors</div>
