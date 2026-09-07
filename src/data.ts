@@ -1,4 +1,4 @@
-// ===== All portfolio content for Zhihui Zhang's 3D Office =====
+// ===== All portfolio content for Jinghan Dong's 3D Office =====
 import { l, type L } from "./i18n";
 
 export interface EduItem {
@@ -15,40 +15,216 @@ export interface EduItem {
 
 export const EDUCATION: EduItem[] = [
   {
-    flag: "🇪🇸",
-    school: "Universidad de Salamanca",
-    schoolZh: "萨拉曼卡大学",
-    degree: "B.A.",
-    degreeZh: "文学学士",
-    year: "2014",
-    place: "Salamanca, Spain",
-    placeZh: "西班牙 · 萨拉曼卡",
-    pin: { x: 0.488, y: 0.285 },
-  },
-  {
-    flag: "🇺🇸",
-    school: "University of Southern California",
-    schoolZh: "南加州大学",
-    degree: "M.A.",
-    degreeZh: "文学硕士",
-    year: "2018",
-    place: "Los Angeles, USA",
-    placeZh: "美国 · 洛杉矶",
-    pin: { x: 0.106, y: 0.3 },
-  },
-  {
-    flag: "🇭🇰",
-    school: "The Chinese University of Hong Kong",
-    schoolZh: "香港中文大学",
-    degree: "PhD Candidate",
-    degreeZh: "博士在读",
+    flag: "🇨🇳",
+    school: "East China Normal University (985)",
+    schoolZh: "华东师范大学（985 保研）",
+    degree: "M.Eng. — Port, Coastal & Offshore Eng. (AI + Water)",
+    degreeZh: "硕士 · 港口、海岸及近海工程（AI+水利）· GPA 3.80/4.0",
     year: "2024 —",
-    place: "Hong Kong, China",
-    placeZh: "中国 · 香港",
-    pin: { x: 0.799, y: 0.372 },
+    place: "Shanghai, China",
+    placeZh: "中国 · 上海",
+    pin: { x: 0.795, y: 0.365 },
+  },
+  {
+    flag: "🇨🇳",
+    school: "Shanghai Ocean University (Double First-Class)",
+    schoolZh: "上海海洋大学（双一流）",
+    degree: "B.Eng. — Environmental Eng. & Computer Science (double major)",
+    degreeZh: "本科 · 环境工程 & 计算机科学与技术（双专业）· GPA 3.75/4.0",
+    year: "2020 — 2024",
+    place: "Shanghai, China",
+    placeZh: "中国 · 上海",
+    pin: { x: 0.815, y: 0.385 },
   },
 ];
 
+// ---------- 实习经历（电脑屏幕放映机） ----------
+export interface InternshipItem {
+  title: L;
+  desc: L;
+  metric: L; // quantified result, shown highlighted
+}
+
+export interface Internship {
+  id: string;
+  num: string;
+  company: L;
+  role: L;
+  period: string;
+  scene: L;      // e.g. TO B — 商家 AI 创意生产
+  headline: L;   // the one-line business result
+  background: L;
+  items: InternshipItem[];
+}
+
+export const INTERNSHIPS: Internship[] = [
+  {
+    id: "bytedance",
+    num: "01",
+    company: l("ByteDance · Douyin Life Service", "字节跳动 · 抖音生活服务"),
+    role: l("AI Product Manager", "AI 产品经理"),
+    period: "2026.06 — Now",
+    scene: l("TO B — Merchant AI Creative Production", "TO B — 商家 AI 创意生产"),
+    headline: l(
+      "AI creative videos: GMV +12% vs. merchants' own videos, VV +16%",
+      "AI 创意视频 GMV 较商家原生视频提升 12%，VV 提升 16%"
+    ),
+    background: l(
+      "Merchant creative production relied on manual experience, with insufficient quality assets and viral know-how hard to reuse. I upgraded AI creation across three scenarios — asset optimization, viral replication and auto hosting — from content generation to reusable strategy, measurable quality and automatic execution.",
+      "商家创意生产依赖人工经验，优质素材供给不足且爆款经验难规模复用；围绕素材优化、爆款复刻与自动托管三类场景，推动商家 AI 创作由内容生成向策略可复用、效果可评测、任务可自动执行升级。"
+    ),
+    items: [
+      {
+        title: l("Creative Strategy Distillation & Prompt Optimization", "创意策略蒸馏与 Prompt 优化"),
+        desc: l(
+          "Decomposed creative elements (theme, marketing expression) from top-performing videos with LLMs, refined prompts against posterior performance, and distilled them into reusable creative tags and strategy Skills.",
+          "基于大盘高表现视频，通过大模型拆解主题及营销表达等创意要素，结合后验效果精筛并迭代 Prompt，沉淀为创意标签及策略 Skill。"
+        ),
+        metric: l("Strategy usability +21% · manual production efficiency +35%", "策略可用率提升 21% · 人工策略生产效率提升 35%"),
+      },
+      {
+        title: l("Video Generation & Quality Evaluation", "视频生成与质量评测"),
+        desc: l(
+          "Located key issues in prompts, input assets and model generation from historical videos and bad cases; continuously tuned the generation pipeline and built quality evaluation standards.",
+          "基于历史成片与 Bad Case 定位 Prompt、输入素材及模型生成等关键问题，持续调优生成链路并建立质量评测标准，驱动生成策略迭代。"
+        ),
+        metric: l("Usable video rate +25%", "成片可用率提升 25%"),
+      },
+      {
+        title: l("Intelligent Creation Agent", "智能创作 Agent"),
+        desc: l(
+          "Built three creation pipelines (asset optimization, viral replication, auto hosting) with a Main Agent orchestrating sub-Agents / Skills / Tools, and a Harness managing tool calls, task states and result verification.",
+          "搭建素材优化、爆款复刻及自动托管三类创作链路，由 Main Agent 统一调度子 Agent / Skill / Tool，并通过 Harness 管理 Tool 调用、任务状态及结果校验。"
+        ),
+        metric: l("Production efficiency +50% · task anomaly rate −12%", "视频生产效率提升 50% · 任务异常率降低 12%"),
+      },
+    ],
+  },
+  {
+    id: "xhs",
+    num: "02",
+    company: l("Xiaohongshu (RED) · Diandian App", "小红书 · 点点 App"),
+    role: l("Agent Product Manager", "Agent 产品经理"),
+    period: "2026.03 — 2026.06",
+    scene: l("TO C — AI Shopping Buddy for Fashion & Goods", "TO C — AI 好物买手"),
+    headline: l("Seeding-to-purchase conversion +15%", "种草转化率提升 15%"),
+    background: l(
+      "Users faced vague need expression, underused personalization and long decision chains. I upgraded the Agent from generic Q&A to a personalized shopping assistant that understands users, picks better products and guides decisions.",
+      "用户购物决策存在需求表达模糊、个性化信息利用不足及决策链路长等问题；围绕需求理解、商品推荐与决策引导，推动 Agent 由通用问答向更懂用户、更会选品、更能辅助决策的个性化购物助手升级。"
+    ),
+    items: [
+      {
+        title: l("Personalized Signal Consumption Strategy", "个性化信号消费策略"),
+        desc: l(
+          "Fused user profile, recent interests, historical behavior and session context; consolidated stable preferences via Memory with signal prioritization and conflict-resolution, applied to need understanding, clarification and search recommendation.",
+          "融合用户画像、近期兴趣、历史行为及会话上下文，通过 Memory 沉淀稳定偏好并建立信号优先级与冲突更新机制，作用于需求理解、澄清与搜索推荐。"
+        ),
+        metric: l("Recommendation match +40%", "推荐匹配效果提升 40%"),
+      },
+      {
+        title: l("High-Conversion Shopping-Guide Strategy Distillation", "高转化导购策略蒸馏"),
+        desc: l(
+          "Mined top-agent historical dialogs, extracted high-conversion scripts and decision strategies (comparison guidance, scenario recommendation), and distilled them into reusable guide Skills.",
+          "分析金牌客服历史对话，提炼对比引导、场景推荐等高转化话术与决策策略，沉淀为可复用的导购 Skill，提升消费决策引导能力。"
+        ),
+        metric: l("Guide Skill effective hit rate 76%", "导购 Skill 有效命中率达 76%"),
+      },
+      {
+        title: l("AI-Powered Product Selection", "AI 智能选品"),
+        desc: l(
+          "Built a Main Agent + Search Agent pipeline: RAG over products, UGC and guide strategies based on user context for recall, filtering and ranking; Harness unified session context, Memory I/O and tool calls.",
+          "搭建 Main Agent + Search Agent 协同链路，基于用户 Context 通过 RAG 调用商品、UGC 及导购策略信息完成召回与筛选排序，并通过 Harness 统一管理会话上下文、Memory 读写与 Tool 调用。"
+        ),
+        metric: l("Task completion 90% · solution adoption +18%", "任务完成率达 90% · 方案采纳率提升 18%"),
+      },
+    ],
+  },
+  {
+    id: "bilibili",
+    num: "03",
+    company: l("Bilibili · Triple-Click Promotion", "哔哩哔哩 · 三连推广"),
+    role: l("AI Product Manager", "AI 产品经理"),
+    period: "2026.01 — 2026.03",
+    scene: l("TO B — AI Ad Creative Generation", "TO B — AI 广告素材创作"),
+    headline: l("AI-generated assets took 45% of total consumption", "AI 衍生素材消耗占比达 45%"),
+    background: l(
+      "Facing asset shortage, high manual production cost and lagging optimization, I upgraded asset production toward automatic generation, measurable quality and continuous optimization.",
+      "面向素材不足、人工生产成本高及优化滞后问题，推动素材生产向自动生成、质量可评、持续优化升级。"
+    ),
+    items: [
+      {
+        title: l("Multimodal AIGC Asset Generation", "多模态 AIGC 素材生成"),
+        desc: l(
+          "Identified product selling points and marketing scenarios from uploaded images with multimodal models, generated titles and covers based on historical top assets, and selected winners via a five-level quality evaluation system.",
+          "基于上传图片通过多模态模型识别商品卖点与营销场景，结合历史优质素材生成标题与封面，并通过五级质量评估体系完成优选。"
+        ),
+        metric: l("AI cover CTR +24% vs. non-AI covers", "AI 封面 CTR 较非 AI 封面提升 24%"),
+      },
+      {
+        title: l("Multi-Agent Autonomous Asset Optimization", "多 Agent 素材自主优化"),
+        desc: l(
+          "Built a Monitor + Judge + Generator agent pipeline: spotted low-efficiency assets by CTR and ROI, recalled similar cases from a 6M+ case library via keyword matching and vector retrieval, generated optimization strategies and auto-triggered AIGC regeneration.",
+          "搭建监控 Agent、裁判 Agent、生成 Agent 协同链路；基于 CTR 和 ROI 识别低效素材，通过关键词匹配与向量检索从 600 万+历史案例库召回相似低效案例并生成优化策略，自动触发 AIGC 重生成。"
+        ),
+        metric: l("New-asset guaranteed delivery ratio +72%", "新素材保底跑量比例提升 72%"),
+      },
+    ],
+  },
+];
+
+// ---------- 能力标签（黑板便签） ----------
+export interface Skill {
+  id: string;      // sticky branch id
+  name: L;
+  tagline: L;
+  detail: L;
+  chips: string[]; // tool / tech keywords
+}
+
+export const SKILLS: Skill[] = [
+  {
+    id: "business",
+    name: l("Business Insight", "业务洞察能力"),
+    tagline: l("From pain points to shipped products (0→1)", "从业务痛点到产品 0→1 落地"),
+    detail: l(
+      "I identify core problems from user behavior and business data, abstract pain points — inefficient creative production, long consumption decision chains — into product solutions, and drive them 0→1. Core projects delivered GMV +12%.",
+      "能够从用户行为与业务数据中识别核心问题，将创意生产低效、消费决策链路长等业务痛点抽象为产品方案，推动产品 0→1 完成落地；核心项目实现 GMV 提升 12%。"
+    ),
+    chips: ["用户行为分析", "业务数据洞察", "产品 0→1", "GMV +12%"],
+  },
+  {
+    id: "vibe",
+    name: l("Vibe Coding", "Vibe Coding 能力"),
+    tagline: l("AI demos & interactive prototypes, fast", "快速搭建 AI Demo 与交互原型"),
+    detail: l(
+      "Fluent with Claude Code, Qoder CN, WorkBuddy, Coze and Figma to build AI demos and interactive prototypes — this very 3D office was built with WorkBuddy.",
+      "熟练使用 Claude Code、Qoder CN、WorkBuddy、Coze、Figma 搭建 AI Demo 与交互原型——你正在看的这个 3D 办公室就是用 WorkBuddy 搭的。"
+    ),
+    chips: ["Claude Code", "Qoder CN", "WorkBuddy", "Coze", "Figma"],
+  },
+  {
+    id: "tech",
+    name: l("AI Tech Understanding", "AI 技术理解能力"),
+    tagline: l("Agent · RAG · Memory · Harness", "Agent · RAG · Memory · Harness"),
+    detail: l(
+      "Familiar with Agent, RAG, Memory and Harness architectures; understand context management and tool-calling mechanisms. With 4 SCI papers published, I know where model capability boundaries lie and collaborate efficiently with algorithm & engineering teams.",
+      "熟悉 Agent、RAG、Memory、Harness 等 AI 技术体系，理解上下文管理与 Tool 调用机制；已发表 4 篇 SCI 论文，能够理解模型能力边界并与算法、研发高效协同。"
+    ),
+    chips: ["Agent", "RAG", "Memory", "Harness", "SCI × 4"],
+  },
+];
+
+/** sticky notes on the blackboard — one per skill + tech keywords */
+export const KEYWORDS: { text: string; branch: string; color: string }[] = [
+  { text: "Business Insight", branch: "business", color: "#ffe45e" },
+  { text: "Vibe Coding", branch: "vibe", color: "#9df2ff" },
+  { text: "AI Tech", branch: "tech", color: "#b6ff9d" },
+  { text: "Agent · RAG", branch: "tech", color: "#ffc59d" },
+  { text: "Memory", branch: "tech", color: "#d8b4fe" },
+  { text: "Harness", branch: "tech", color: "#ff9de2" },
+];
+
+// ---------- 论文（黑板 + 投影仪） ----------
 export interface Paper {
   title: string;
   venue: string;
@@ -61,215 +237,83 @@ export interface Paper {
 }
 
 export const BRANCHES = [
-  "Vocabulary",
-  "Writing",
-  "Assessment & Motivation",
-  "Curriculum Design",
-  "Review",
+  "Hydrology & Runoff",
+  "Water Quality",
+  "Energy Finance",
+  "XAI",
 ] as const;
 
 export const PAPERS: Paper[] = [
   {
     title:
-      "The impact of chatbots based on large language models on second language vocabulary acquisition",
-    venue: "Heliyon",
-    tag: "Vocabulary",
-    award: "AERA 2024 · Division C Award",
-    doi: "https://doi.org/10.1016/j.heliyon.2024.e25370",
+      "A Novel Runoff Prediction Model Based on Support Vector Machine and Gate Recurrent Unit with Secondary Mode Decomposition",
+    venue: "Water Resources Management, 38:1655–1674 (2024)",
+    tag: "Hydrology & Runoff",
+    award: "第一作者 · First Author",
+    doi: "https://doi.org/10.1007/s11269-024-03748-5",
     cover: "/papers/paper1.jpg",
-    poster: "/posters/research1.png",
+    poster: "/papers/paper1.jpg",
   },
   {
-    title: "How L2 Learners Negotiate Meaning in GenAI-Supported Creative Writing",
-    venue: "International Journal of Applied Linguistics",
-    tag: "Writing",
-    doi: "https://doi.org/10.1111/ijal.70256",
+    title:
+      "A Water Quality Prediction Model Based on Signal Decomposition and Ensemble Deep Learning Techniques",
+    venue: "Water Science & Technology (2023)",
+    tag: "Water Quality",
+    award: "第一作者 · First Author",
+    doi: "https://doi.org/10.2166/wst.2023.357",
     cover: "/papers/paper2.jpg",
-    poster: "/posters/research4.png",
+    poster: "/papers/paper2.jpg",
   },
   {
     title:
-      "The role of generative AI and hybrid feedback in improving L2 writing skills: A comparative study",
-    venue: "Innovation in Language Learning and Teaching",
-    tag: "Writing",
-    award: "BERA 2025",
-    doi: "https://doi.org/10.1080/17501229.2025.2503890",
+      "A Novel Hybrid Model Based on Deep Learning and Error Correction for Crude Oil Futures Prices Forecast",
+    venue: "Resources Policy, 83:103602 (2023)",
+    tag: "Energy Finance",
+    doi: "https://doi.org/10.1016/j.resourpol.2023.103602",
     cover: "/papers/paper3.jpg",
-    poster: "/posters/research2.png",
+    poster: "/papers/paper3.jpg",
   },
   {
-    title: "EFL learners' motivation in a gamified formative assessment: The case of Quizizz",
-    venue: "Education and Information Technologies",
-    tag: "Assessment & Motivation",
-    doi: "https://doi.org/10.1007/s10639-023-12034-7",
+    title:
+      "Robust Runoff Prediction With Explainable Artificial Intelligence and Meteorological Variables From Deep Learning Ensemble Model",
+    venue: "Water Resources Research (2023)",
+    tag: "XAI",
+    doi: "https://doi.org/10.1029/2023WR035676",
     cover: "/papers/paper4.jpg",
-    poster: "/posters/research3.png",
+    poster: "/papers/paper4.jpg",
   },
-  {
-    title: "Exploring the impact of the adaptive gamified assessment on learners in blended learning",
-    venue: "Education and Information Technologies, 29:21869–21889",
-    tag: "Assessment & Motivation",
-    doi: "https://doi.org/10.1007/s10639-024-12708-w",
-    cover: "/papers/paper5.jpg",
-    poster: "/posters/research6.png",
-  },
-  {
-    title:
-      "How Do Language and Science Students Respond to Emotional Designs in AI-Based Chatbot Feedback from a Self-Determination Theory",
-    venue: "Under Review",
-    tag: "Assessment & Motivation",
-    underReview: true,
-  },
-  {
-    title:
-      "Comparing the Impact of Synchronous and Asynchronous Generative AI-Assisted Learning in K-12 Education",
-    venue: "Under Review",
-    tag: "Curriculum Design",
-    underReview: true,
-  },
-  {
-    title:
-      "How Does Learner Prior Language Knowledge Play in GenAI-Assisted Project-Based Learning for Creative Thinking?",
-    venue: "Technology, Knowledge and Learning, 1–31",
-    tag: "Curriculum Design",
-    doi: "https://doi.org/10.1007/s10758-026-09984-5",
-    cover: "/papers/paper6.jpg",
-    poster: "/posters/research5.png",
-  },
-  {
-    title:
-      "Does Generative Artificial Intelligence (GenAI) Boost Language Skills? Evidence from a Meta-analysis",
-    venue: "Under Review",
-    tag: "Review",
-    underReview: true,
-  },
-];
-
-export interface Project {
-  id: string;
-  num: string;
-  title: string;
-  desc: string;
-  media: string[]; // gif / png paths
-  awards: string[];
-  link?: string;
-}
-
-export const PROJECTS: Project[] = [
-  {
-    id: "ai-journey",
-    num: "01",
-    title: "AI Journey: A Gamified AI Learning Adventure",
-    desc: "A gamified adventure that guides students through core AI knowledge — with a special focus on AI ethics — helping them recognize the limitations and pitfalls of AI and build critical AI literacy.",
-    media: ["/projects/project_new.gif"],
-    awards: ["📜 Software Invention Patent No. 2026SR0577734"],
-  },
-  {
-    id: "postcard",
-    num: "02",
-    title: "GenAI-Powered Postcard Dialogue System",
-    desc: "A GenAI-powered postcard dialogue system grounded in Self-Determination Theory, providing personalized language-learning feedback to enhance intrinsic motivation.",
-    media: ["/projects/project1.gif"],
-    awards: ["📜 Software Invention Patent No. 2025R11L2331073"],
-    link: "https://picecho.top",
-  },
-  {
-    id: "vocab-test",
-    num: "03",
-    title: "Gamified Vocabulary Testing System",
-    desc: "A gamified vocabulary testing system based on cognitive theory, dynamically adapting to learners' levels for efficient and engaging assessment.",
-    media: ["/projects/project2.gif"],
-    awards: [
-      "📜 Patent Invention No. 2022120701917470",
-      "🏆 Baidu AI Vibe Coding Best Communication Award | 2025",
-    ],
-    link: "https://www.miaoda.cn/apps/app-6nwcjdhgv20x?s=s",
-  },
-  {
-    id: "ielts",
-    num: "04",
-    title: "AI-Powered IELTS Writing Evaluation & Learning Planner",
-    desc: "AI-delivered criterion-based IELTS writing feedback with actionable revisions, real-time Q&A aligned with feedback, side-by-side editing, and personalized writing summaries and study plans.",
-    media: ["/projects/project3.gif"],
-    awards: [],
-    link: "http://www.test-writing.top/",
-  },
-  {
-    id: "autoworksheet",
-    num: "05",
-    title: "AutoWorksheet: Gamified Printables in One Click",
-    desc: "Upload any audio/text, instantly generate bingo, board-game or flash-card worksheets — gamified prep in one click.",
-    media: ["/projects/project4.gif"],
-    awards: ["🏆 RedBook AI Vibe Coding Best Developer Award | 2025"],
-  },
-  {
-    id: "booktail",
-    num: "06",
-    title: "BookTail – AI Pet Reading Companion",
-    desc: "An AI pet that grows and unlocks features as elementary students read better — turning reading progress into pet care fun.",
-    media: ["/projects/project5.gif"],
-    awards: ["🏆 TAL AI Vibe Coding Best Creativity Award | 2025"],
-  },
-  {
-    id: "3d-word",
-    num: "07",
-    title: "3D Word Memorization Display Product",
-    desc: "A 3D word memorization display product that enhances memory retention through spatial association and visualization.",
-    media: ["/projects/project6_1.png", "/projects/project6_2.png"],
-    awards: [
-      "📜 Patent Invention No. 202111409594.8",
-      "🏆 NYBPC: 2nd Place NY District & Best Female Entrepreneurship Award | 2020",
-      "🏆 Pride Pitch Canada Finals: 1st Place | 2020",
-    ],
-  },
-];
-
-export const KEYWORDS: { text: string; branch: string; color: string }[] = [
-  { text: "Generative AI", branch: "all", color: "#ffe45e" },
-  { text: "L2 Vocabulary", branch: "Vocabulary", color: "#ff9de2" },
-  { text: "Creative Writing", branch: "Writing", color: "#9df2ff" },
-  { text: "Gamified Assessment", branch: "Assessment & Motivation", color: "#b6ff9d" },
-  { text: "Learner Motivation", branch: "Assessment & Motivation", color: "#ffc59d" },
-  { text: "Curriculum Design", branch: "Curriculum Design", color: "#d8b4fe" },
 ];
 
 export const POSTERS = [
-  "/posters/research1.png",
-  "/posters/research2.png",
-  "/posters/research3.png",
-  "/posters/research4.png",
-  "/posters/research5.png",
-  "/posters/research6.png",
+  "/papers/paper1.jpg",
+  "/papers/paper2.jpg",
+  "/papers/paper3.jpg",
+  "/papers/paper4.jpg",
 ];
 
 /** Published papers shown on the blackboard (under-review work stays hidden) */
 export const PUBLISHED = PAPERS.filter((p) => !p.underReview && p.cover && p.poster);
 
-/** Phone GIFs played on the desk phone when zoomed in */
-export const PHONE_GIFS = ["/phone/phone1.gif", "/phone/phone2.gif", "/phone/phone3.gif"];
-
+// ---------- 照片墙 ----------
 export interface PhotoItem {
   src: string;
   story: L; // short bilingual caption shown when the photo is zoomed in
 }
 
-/** 15 wall photos — order matches the photo files; stories told by the owner */
 export const PHOTOS: PhotoItem[] = [
-  { src: "/photos/photo1.jpg",  story: l("The cathedral of Salamanca, Spain — where my journey began.", "西班牙萨拉曼卡的教堂——我旅程开始的地方。") },
-  { src: "/photos/photo2.jpg",  story: l("Undergrad graduation trip — Chongqing memories.", "本科毕业旅行——重庆的记忆。") },
-  { src: "/photos/photo3.jpg",  story: l("Conference days in Los Angeles.", "在洛杉矶开会的日子。") },
-  { src: "/photos/photo4.jpg",  story: l("Biking along the waterfront in Vancouver.", "在温哥华的海边骑行。") },
-  { src: "/photos/photo5.jpg",  story: l("Ski trip to Altay, Xinjiang — sunset over the snowland.", "新疆阿勒泰滑雪之旅——雪原上的落日。") },
-  { src: "/photos/photo6.jpg",  story: l("Ben the labrador, living his best life.", "大奔的日常——一只幸福的拉布拉多。") },
-  { src: "/photos/photo7.jpg",  story: l("Aquarium day with my little one.", "和宝宝在海洋馆的一天。") },
-  { src: "/photos/photo8.jpg",  story: l("Presenting my poster at AERA 2024.", "在 AERA 2024 展示我的研究海报。") },
-  { src: "/photos/photo9.jpg",  story: l("Hacking away at an AI hackathon.", "参加 AI 黑客松比赛。") },
-  { src: "/photos/photo10.jpg", story: l("Conference trip to Austria — lakes and mountains.", "在奥地利开会——湖光山色。") },
-  { src: "/photos/photo11.jpg", story: l("Our wedding day. 💍", "我们的结婚照。💍") },
-  { src: "/photos/photo12.jpg", story: l("Back in my hometown — the swans had babies!", "在家乡——天鹅生宝宝啦！") },
-  { src: "/photos/photo13.jpg", story: l("Celebrating my 30th birthday. 🎂", "我的 30 岁生日。🎂") },
-  { src: "/photos/photo14.jpg", story: l("Everyday moments with the baby.", "宝宝的日常。") },
-  { src: "/photos/photo15.jpg", story: l("Master's graduation — officially a Trojan! ✌️", "研究生毕业照——正式毕业啦！✌️") },
+  { src: "/photos/photo1.jpg",  story: l("Butterbeer at the Wizarding World — Gryffindor for a day! 🍺", "环球影城的黄油啤酒——格兰芬多一日体验！🍺") },
+  { src: "/photos/photo2.jpg",  story: l("Lost in the music. 🎧", "沉浸在音乐里。🎧") },
+  { src: "/photos/photo3.jpg",  story: l("One last read in the library — graduation season. 🎓", "毕业季，在图书馆再读一本书。🎓") },
+  { src: "/photos/photo4.jpg",  story: l("Birthday dinner — flowers, candles & wishes. 🎂", "生日晚餐——鲜花、蜡烛和愿望。🎂") },
+  { src: "/photos/photo5.jpg",  story: l("A portrait in blue. 💙", "蓝色系写真。💙") },
+  { src: "/photos/photo6.jpg",  story: l("Golden light, golden mood. ✨", "金色的光，金色的心情。✨") },
+  { src: "/photos/photo7.jpg",  story: l("Snowboarding day — pink turtle armor on! 🏂", "滑雪日——粉色小乌龟护具上线！🏂") },
+  { src: "/photos/photo8.jpg",  story: l("Platform 9¾ — off to Hogwarts! 🪄", "九又四分之三站台——出发去霍格沃茨！🪄") },
+  { src: "/photos/photo9.jpg",  story: l("The Bund at night — my city, Shanghai. 🌃", "外滩的夜景——我的城市，上海。🌃") },
+  { src: "/photos/photo10.jpg", story: l("Night stroll along the Huangpu River. 🌉", "黄浦江边夜游。🌉") },
+  { src: "/photos/photo11.jpg", story: l("Sea-view capsule train in Busan. 🚃", "釜山海边的胶囊小火车。🚃") },
+  { src: "/photos/photo12.jpg", story: l("Jumping into the sunshine! ☀️", "跳进阳光里！☀️") },
+  { src: "/photos/photo13.jpg", story: l("Golden hour on the lawn. 🌿", "草坪上的黄昏时光。🌿") },
 ];
 
 /**
@@ -277,28 +321,31 @@ export const PHOTOS: PhotoItem[] = [
  * Photos keep their data order (story ↑ stays in sync); landscape photos
  * fill L slots in order, portrait photos fill P slots in order.
  */
-export const PHOTO_WALL_PATTERN = ["LPLPL", "LPPLL", "PLLLL"];
+export const PHOTO_WALL_PATTERN = ["PPLPP", "PPPPP", "LPP"];
 
 /** width/height aspect of each photo (kept native — frames never distort) */
 export const PHOTO_ASPECTS = [
-  1.5, 1.431, 1.333, 1.333, 1.5, 1.334, 1.333, 1.333, 1.503, 1.333,
-  0.667, 0.748, 0.667, 0.75, 0.75,
+  1.501, 0.749, 0.75, 0.75, 0.666, 0.666, 0.75, 0.666, 0.666, 0.666,
+  1.333, 0.741, 0.75,
 ];
 
 /** width/height aspect of each paper first-page cover (from the source PDFs) */
-export const COVER_ASPECTS = [0.733, 0.766, 0.702, 0.659, 0.659, 0.659];
+export const COVER_ASPECTS = [0.659, 0.779, 0.75, 0.763];
 
+// ---------- 联系方式 ----------
 export const CONTACT = {
-  phone: "+856 60905092",
-  email: "zhihuiz@link.cuhk.edu.hk",
-  linkedin: "https://linkedin.com/in/zhihui-zhang-077824183",
-  scholar: "https://scholar.google.com/citations?user=UZLg1a4AAAAJ&hl=zh-CN",
-  github: "https://github.com/sirazhang",
+  phone: "+86 13524038865",
+  email: "djh1721695188@163.com",
+  site: "https://dongjinghan.cn",
+  github: "https://github.com/djh20010513",
 };
 
+// ---------- 荣誉速览（欢迎页） ----------
 export const HONORS = [
-  "🎓 Duolingo Research Grant · 2025",
-  "🏅 Vice-Chancellor's Scholarship, CUHK · 2024",
-  "🗣️ Mandarin · English · Spanish · French",
-  "💻 SQL · Python · SPSS · Front-end (HTML/CSS/JS)",
+  "🎓 ECNU Academic Excellence Scholarship · 华东师范大学优秀学业奖学金",
+  "🎓 First-Class Postgraduate Scholarship · 研究生一等奖学金",
+  "🏅 Shanghai Outstanding Graduate · 上海市优秀毕业生",
+  "💼 ByteDance · Xiaohongshu · Bilibili — AI Product Manager",
+  "📄 4 SCI papers (2 as first author) · 4 篇 SCI（2 篇一作）",
+  "💻 Claude Code · WorkBuddy · Coze · Figma",
 ];

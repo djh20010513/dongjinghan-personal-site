@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { BRANCHES, CONTACT, HONORS, PAPERS, PHONE_GIFS, PHOTOS, POSTERS, PROJECTS } from "../data";
+import { CONTACT, HONORS, INTERNSHIPS, PHOTOS, POSTERS, SKILLS } from "../data";
 import { ABOUT, AWARDS, STR, t, type Lang } from "../i18n";
 
 // ============================================================
@@ -10,30 +10,28 @@ export function WelcomeOverlay({ onClose }: { onClose: () => void }) {
     <div className="sheet-backdrop" onClick={onClose}>
       <div className="sheet sheet-welcome" onClick={(e) => e.stopPropagation()}>
         <button className="panel-close" onClick={onClose} aria-label="close">×</button>
-        <h1 className="welcome-title">Hi, I'm <span>Zhihui Zhang 张淽卉</span> 👋</h1>
+        <h1 className="welcome-title">Hi, I'm <span>Jinghan Dong 董静涵</span> 👋</h1>
         <p className="welcome-lead">
-          PhD candidate at CUHK, Dept. of Curriculum &amp; Instruction — exploring how
-          <strong> generative AI</strong> sparks creativity &amp; motivation in language learners.
-          Welcome to my office. Everything here tells a story:
+          AI Product Manager — interned at <strong>ByteDance, Xiaohongshu &amp; Bilibili</strong>,
+          building Agent / AIGC products. Welcome to my office. Everything here tells a story:
         </p>
         <div className="welcome-grid">
-          <div>📋 <b>Blackboard</b> — 6 papers, DOI stickers &amp; posters</div>
+          <div>💻 <b>Computer</b> — sit down &amp; browse my internships</div>
+          <div>🏷️ <b>Sticky notes</b> — my skill tags</div>
           <div>🗺️ <b>World map</b> — my education journey</div>
-          <div>💻 <b>Computer</b> — sit down &amp; play my projects</div>
-          <div>📱 <b>Phone</b> — zoom in for app demos</div>
-          <div>🏷️ <b>Sticky notes</b> — research keywords</div>
+          <div>📋 <b>Blackboard</b> — 4 SCI papers &amp; DOI stickers</div>
+          <div>📄 <b>Desk frame</b> — my résumé</div>
+          <div>📱 <b>Phone</b> — contact me</div>
+          <div>🏆 <b>Trophies</b> — awards &amp; honors</div>
           <div>✏️ <b>Blank note</b> — leave me a message</div>
-          <div>🎵 <b>Vinyl</b> — music on / off</div>
-          <div>🪑 <b>Red chair</b> — give it a spin</div>
-          <div>🐕 <b>Ben</b> — pat the dog!</div>
+          <div>🐕 <b>Dog</b> — pat him!</div>
         </div>
         <div className="honor-list">
           {HONORS.map((h, i) => <div key={i}>{h}</div>)}
         </div>
         <div className="contact-row">
           <a href={`mailto:${CONTACT.email}`}>{CONTACT.email}</a>
-          <a href={CONTACT.linkedin} target="_blank" rel="noreferrer">LinkedIn</a>
-          <a href={CONTACT.scholar} target="_blank" rel="noreferrer">Google Scholar</a>
+          <a href={CONTACT.site} target="_blank" rel="noreferrer">dongjinghan.cn</a>
           <a href={CONTACT.github} target="_blank" rel="noreferrer">GitHub</a>
         </div>
         <button className="enter-btn" onClick={onClose}>Come on in →</button>
@@ -43,53 +41,49 @@ export function WelcomeOverlay({ onClose }: { onClose: () => void }) {
 }
 
 // ============================================================
-// Reading view — light academic publications board, 3 cards per row
+// Skills view — opened from the sticky notes on the blackboard
 // ============================================================
-const TAG_COLORS: Record<string, string> = {
-  Vocabulary: "#d6336c",              // 玫红
-  Writing: "#1f3a93",                 // 藏青
-  "Assessment & Motivation": "#0ca678", // 青绿
-  "Curriculum Design": "#e8590c",     // 橘
-  Review: "#868e96",                  // 灰
+const SKILL_COLORS: Record<string, string> = {
+  business: "#e8590c",  // 橘
+  vibe: "#1f3a93",      // 藏青
+  tech: "#0ca678",      // 青绿
 };
 
-export function ReadingOverlay({ branch, onClose }: { branch: string; onClose: () => void }) {
+export function SkillOverlay({ branch, lang, onClose }: { branch: string; lang: Lang; onClose: () => void }) {
   const [filter, setFilter] = useState(branch);
   useEffect(() => setFilter(branch), [branch]);
-  const list = useMemo(
-    () => (filter === "all" ? PAPERS : PAPERS.filter((p) => p.tag === filter)),
-    [filter]
-  );
+  const skill = useMemo(() => SKILLS.find((s) => s.id === filter) ?? SKILLS[0], [filter]);
+  const color = SKILL_COLORS[skill.id] || "#868e96";
   return (
     <div className="sheet-backdrop reading" onClick={onClose}>
       <div className="sheet sheet-reading" onClick={(e) => e.stopPropagation()}>
         <button className="panel-close" onClick={onClose} aria-label="close">×</button>
         <h2 className="sheet-title reading-title">
-          Publications
+          {t(STR.skillTitle, lang)}
           <img className="title-clip" src="/stickers/回形针.png" alt="" />
         </h2>
         <div className="chip-row">
-          <button className={`chip ${filter === "all" ? "chip-on" : ""}`} onClick={() => setFilter("all")}>All</button>
-          {BRANCHES.map((b) => (
-            <button key={b} className={`chip ${filter === b ? "chip-on" : ""}`} onClick={() => setFilter(b)}>{b}</button>
+          {SKILLS.map((s) => (
+            <button
+              key={s.id}
+              className={`chip ${filter === s.id ? "chip-on" : ""}`}
+              onClick={() => setFilter(s.id)}
+            >
+              {t(s.name, lang)}
+            </button>
           ))}
         </div>
-        <div className="paper-grid">
-          {list.map((p, i) => (
-            <div className="paper-card" key={i}>
-              <span className="paper-tag" style={{ background: TAG_COLORS[p.tag] || "#868e96" }}>{p.tag}</span>
-              <div className="paper-title">{p.title}</div>
-              <div className="paper-venue">
-                {p.underReview ? <span className="paper-review">Under Review</span> : p.venue}
-                {p.award && <span className="paper-award">🏆 <b>{p.award}</b></span>}
-              </div>
-              {p.doi && (
-                <a className="paper-doi-btn" href={p.doi} target="_blank" rel="noreferrer">
-                  View / Download <span className="doi-arrow">↓</span>
-                </a>
-              )}
-            </div>
-          ))}
+        <div className="skill-card" style={{ borderColor: color }}>
+          <div className="skill-head" style={{ background: color }}>
+            <span className="skill-name">{t(skill.name, lang)}</span>
+            <span className="skill-tagline">{t(skill.tagline, lang)}</span>
+          </div>
+          <p className="skill-detail">{t(skill.detail, lang)}</p>
+          <div className="skill-chips">
+            {skill.chips.map((c) => (
+              <span className="skill-chip" key={c} style={{ borderColor: color, color }}>{c}</span>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -100,7 +94,7 @@ export function ReadingOverlay({ branch, onClose }: { branch: string; onClose: (
 // Guest note — leave a message
 // ============================================================
 interface GuestNote { name: string; msg: string; ts: number }
-const NOTES_KEY = "zhihui-office-notes";
+const NOTES_KEY = "jinghan-office-notes";
 
 export function NoteOverlay({ lang, onClose }: { lang: Lang; onClose: () => void }) {
   const [name, setName] = useState("");
@@ -144,39 +138,104 @@ export function NoteOverlay({ lang, onClose }: { lang: Lang; onClose: () => void
 }
 
 // ============================================================
-// Screen player — positioned over the 3D monitor screen
+// Internship player — positioned over the 3D monitor screen
 // ============================================================
-export function ScreenPlayer({
-  idx, onNav,
+const COMPANY_COLORS: Record<string, string> = {
+  bytedance: "#325df0",
+  xhs: "#ff2442",
+  bilibili: "#00a1d6",
+};
+
+export function InternshipPlayer({
+  idx, lang, onNav,
 }: {
   idx: number;
+  lang: Lang;
   onNav: (dir: number) => void;
 }) {
-  const p = PROJECTS[idx];
-  const [mediaIdx, setMediaIdx] = useState(0);
-  useEffect(() => setMediaIdx(0), [idx]);
+  const it = INTERNSHIPS[idx];
+  const accent = COMPANY_COLORS[it.id] || "#325df0";
   return (
-    <>
-      <img key={p.media[mediaIdx]} src={p.media[mediaIdx]} alt={p.title} className="sp-img" />
+    <div className="isn-card" key={it.id}>
+      <div className="isn-scroll">
+        <div className="isn-head">
+          <span className="isn-logo" style={{ background: accent }}>{t(it.company, lang).slice(0, 1)}</span>
+          <div className="isn-headtext">
+            <div className="isn-company">{t(it.company, lang)}</div>
+            <div className="isn-role">{t(it.role, lang)} · {it.period}</div>
+          </div>
+          <span className="isn-scene" style={{ borderColor: accent, color: accent }}>{t(it.scene, lang)}</span>
+        </div>
+        <div className="isn-headline" style={{ color: accent }}>{t(it.headline, lang)}</div>
+        <div className="isn-bg">{t(it.background, lang)}</div>
+        <div className="isn-items">
+          {it.items.map((item, i) => (
+            <div className="isn-item" key={i}>
+              <div className="isn-item-title">
+                <span className="isn-item-dot" style={{ background: accent }} />
+                {t(item.title, lang)}
+              </div>
+              <div className="isn-item-desc">{t(item.desc, lang)}</div>
+              <div className="isn-item-metric" style={{ color: accent }}>▲ {t(item.metric, lang)}</div>
+            </div>
+          ))}
+        </div>
+      </div>
       <div className="sp-bar">
         <button className="sp-btn" onClick={() => onNav(-1)}>‹</button>
-        <span className="sp-title">{p.num} · {p.title}</span>
+        <span className="sp-title">{it.num} · {t(it.company, lang)}</span>
         <button className="sp-btn" onClick={() => onNav(1)}>›</button>
       </div>
-      {p.media.length > 1 && (
-        <button className="sp-next-img" onClick={() => setMediaIdx((mediaIdx + 1) % p.media.length)}>›</button>
-      )}
-    </>
+    </div>
   );
 }
 
 // ============================================================
-// Phone player — the GIF inside the fullscreen phone mockup
+// Contact card — inside the fullscreen phone mockup
 // ============================================================
-export function PhonePlayer({ idx }: { idx: number }) {
+export function ContactCard({ lang }: { lang: Lang }) {
   return (
-    <img key={PHONE_GIFS[idx]} src={PHONE_GIFS[idx]} alt={`phone demo ${idx + 1}`} className="sp-img sp-phone-img" />
-  )
+    <div className="cc-card">
+      <img className="cc-avatar" src="/photos/photo2.jpg" alt="Jinghan Dong" />
+      <div className="cc-name">董静涵 · Jinghan Dong</div>
+      <div className="cc-tagline">{t(STR.contactTagline, lang)}</div>
+      <div className="cc-rows">
+        <a className="cc-row" href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}>
+          <span className="cc-ico">📞</span><span>{CONTACT.phone}</span>
+        </a>
+        <a className="cc-row" href={`mailto:${CONTACT.email}`}>
+          <span className="cc-ico">✉️</span><span>{CONTACT.email}</span>
+        </a>
+        <a className="cc-row" href={CONTACT.site} target="_blank" rel="noreferrer">
+          <span className="cc-ico">🌐</span><span>dongjinghan.cn</span>
+        </a>
+        <a className="cc-row" href={CONTACT.github} target="_blank" rel="noreferrer">
+          <span className="cc-ico">🐙</span><span>github.com/djh20010513</span>
+        </a>
+      </div>
+      <div className="cc-title-tag">{t(STR.contactTitle, lang)}</div>
+    </div>
+  );
+}
+
+// ============================================================
+// Résumé viewer — fullscreen PDF + download (from the desk frame)
+// ============================================================
+export function ResumeOverlay({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+  return (
+    <div className="sheet-backdrop" onClick={onClose}>
+      <div className="sheet sheet-resume" onClick={(e) => e.stopPropagation()}>
+        <button className="panel-close" onClick={onClose} aria-label="close">×</button>
+        <div className="resume-head">
+          <h2 className="sheet-title">{t(STR.resumeTitle, lang)}</h2>
+          <a className="resume-dl" href="/resume.pdf" download="董静涵-简历.pdf">
+            {t(STR.resumeDownload, lang)}
+          </a>
+        </div>
+        <iframe className="resume-frame" src="/resume.pdf" title="résumé" />
+      </div>
+    </div>
+  );
 }
 
 // ============================================================
@@ -204,7 +263,7 @@ export const POSTER_TOTAL = POSTERS.length;
 export const PHOTO_TOTAL = PHOTOS.length;
 
 // ============================================================
-// About — the journal on the desk opens this "Hi, I'm Zhihui" sheet
+// About — the journal on the desk opens this "Hi, I'm Jinghan" sheet
 // ============================================================
 export function AboutOverlay({ lang, onClose }: { lang: Lang; onClose: () => void }) {
   return (
@@ -222,10 +281,10 @@ export function AboutOverlay({ lang, onClose }: { lang: Lang; onClose: () => voi
             </ul>
             <div className="about-links">
               <a className="chip" href={`mailto:${CONTACT.email}`}><img src="/logo/52.png" alt="" />Email</a>
-              <a className="chip" href={CONTACT.scholar} target="_blank" rel="noreferrer"><img src="/logo/53.png" alt="" />Scholar</a>
+              <a className="chip" href={CONTACT.site} target="_blank" rel="noreferrer"><img src="/logo/53.png" alt="" />Site</a>
             </div>
             <div className="about-links">
-              <a className="chip" href={CONTACT.linkedin} target="_blank" rel="noreferrer"><img src="/logo/51.png" alt="" />LinkedIn</a>
+              <a className="chip" href={`tel:${CONTACT.phone.replace(/\s/g, "")}`}><img src="/logo/51.png" alt="" />Phone</a>
               <a className="chip" href={CONTACT.github} target="_blank" rel="noreferrer"><img src="/logo/55.png" alt="" />GitHub</a>
             </div>
           </div>
@@ -236,13 +295,13 @@ export function AboutOverlay({ lang, onClose }: { lang: Lang; onClose: () => voi
             </h2>
             <p className="about-intro">
               {lang === "en" ? (
-                <>PhD candidate at CUHK's Dept. of Curriculum &amp; Instruction. I study how <b className="hl">generative AI</b> sparks <b className="hl">creativity</b> &amp; <b className="hl">motivation</b> in language learners — and turn ideas into little tools.</>
+                <>AI Product Manager — interned at <b className="hl">ByteDance</b>, <b className="hl">Xiaohongshu</b> and <b className="hl">Bilibili</b>, building Agent / AIGC products. Also an M.Eng. student at ECNU working on AI + water research. I turn business pain points into products that ship.</>
               ) : (
-                <>香港中文大学课程与教学系在读博士生。我研究<b className="hl">生成式 AI</b> 如何点燃语言学习者的<b className="hl">创造力</b>与<b className="hl">动机</b>——并把灵感做成一个个小工具。</>
+                <>AI 产品经理——在<b className="hl">字节跳动</b>、<b className="hl">小红书</b>、<b className="hl">哔哩哔哩</b>实习，做 Agent / AIGC 产品；也是华东师范大学硕士生，研究 AI + 水利。我把业务痛点做成真正落地的产品。</>
               )}
             </p>
             <div className="about-stickers-row">
-              <img className="about-person" src="/photos/about.png" alt="Zhihui Zhang" />
+              <img className="about-person" src="/photos/about.png" alt="Jinghan Dong" />
               <img className="about-flowers" src="/stickers/鲜花.png" alt="" />
             </div>
           </div>
@@ -290,10 +349,9 @@ export function AwardsOverlay({ lang, onClose }: { lang: Lang; onClose: () => vo
 import { BOOKS } from "../i18n";
 
 export const BOOK_TAG_COLORS: Record<string, string> = {
-  Research: "#1f3a93",      // 藏青
-  Parenting: "#e8590c",     // 橘
-  Fiction: "#0ca678",       // 青绿
-  "Family Reads": "#d6336c", // 玫红
+  Product: "#1f3a93",      // 藏青
+  "AI & Tech": "#0ca678",  // 青绿
+  Thinking: "#e8590c",     // 橘
 };
 
 export function BooksOverlay({ lang, onClose }: { lang: Lang; onClose: () => void }) {

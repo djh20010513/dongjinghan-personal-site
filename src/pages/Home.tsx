@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import OfficeScene from "../components/OfficeScene";
 import {
-  AboutOverlay, AwardsOverlay, BooksOverlay, BrowseBar, NoteOverlay, PhonePlayer, ReadingOverlay, ScreenPlayer,
+  AboutOverlay, AwardsOverlay, BooksOverlay, BrowseBar, ContactCard, InternshipPlayer, NoteOverlay, ResumeOverlay, SkillOverlay,
 } from "../components/Panels";
 import type { OfficeHandles, ScreenRect, ViewMode } from "../three/office";
-import { PHOTOS, PHONE_GIFS, PROJECTS, PUBLISHED } from "../data";
+import { INTERNSHIPS, PHOTOS, PUBLISHED } from "../data";
 import { STR, t, type L, type Lang } from "../i18n";
 import LoadingScreen from "../components/LoadingScreen";
 import "../App.css";
@@ -14,15 +14,15 @@ export default function Home() {
   const [lang, setLangState] = useState<Lang>("en");
   const [hoverLabel, setHoverLabel] = useState<L | null>(null);
   const [mode, setMode] = useState<ViewMode>("home");
-  const [papersBranch, setPapersBranch] = useState<string | null>(null);
+  const [skillBranch, setSkillBranch] = useState<string | null>(null);
   const [noteOpen, setNoteOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
   const [booksOpen, setBooksOpen] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
   const [posterIdx, setPosterIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
-  const [projectIdx, setProjectIdx] = useState(0);
-  const [phoneGifIdx, setPhoneGifIdx] = useState(0);
+  const [internshipIdx, setInternshipIdx] = useState(0);
   const handlesRef = useRef<OfficeHandles | null>(null);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
   const screenOverlayRef = useRef<HTMLDivElement | null>(null);
@@ -46,17 +46,11 @@ export default function Home() {
   }, []);
 
   const goBack = useCallback(() => {
-    setPapersBranch(null);
+    setSkillBranch(null);
     setNoteOpen(false);
+    setResumeOpen(false);
     handlesRef.current?.backToRoom();
   }, []);
-
-  // phone zoom: auto-advance the demo GIFs while the mockup is open
-  useEffect(() => {
-    if (mode !== "phone") return;
-    const timer = setInterval(() => setPhoneGifIdx((i) => (i + 1) % PHONE_GIFS.length), 9000);
-    return () => clearInterval(timer);
-  }, [mode]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -84,7 +78,7 @@ export default function Home() {
     el.style.height = `${rect.height}px`;
   }, []);
 
-  const inOverlay = papersBranch !== null || noteOpen || aboutOpen || awardsOpen || booksOpen;
+  const inOverlay = skillBranch !== null || noteOpen || aboutOpen || awardsOpen || booksOpen || resumeOpen;
   const showBack = mode !== "home" && !inOverlay;
 
   return (
@@ -99,7 +93,7 @@ export default function Home() {
           onScreenRect,
           onPhotoIndex: setPhotoIdx,
           onPosterIndex: setPosterIdx,
-          onOpenPapers: (b) => setPapersBranch(b),
+          onOpenPapers: (b) => setSkillBranch(b),
           onOpenNote: () => setNoteOpen(true),
           onOpenAbout: () => setAboutOpen(true),
           onOpenAwards: () => setAwardsOpen(true),
@@ -122,7 +116,7 @@ export default function Home() {
 
       {/* brand */}
       <div className="brand">
-        <span className="brand-dot" /> Zhihui's Office · 张淽卉
+        <span className="brand-dot" /> Jinghan's Office · 董静涵
       </div>
 
       {/* language toggle */}
@@ -167,33 +161,32 @@ export default function Home() {
       {/* computer screen player — locked onto the 3D monitor */}
       <div ref={screenOverlayRef} className={`screen-overlay ${mode === "phone" ? "phone-mode" : ""}`} style={{ display: "none" }}>
         {mode === "screen" && (
-          <ScreenPlayer idx={projectIdx} onNav={(d) => setProjectIdx((projectIdx + d + PROJECTS.length) % PROJECTS.length)} />
+          <InternshipPlayer idx={internshipIdx} lang={lang} onNav={(d) => setInternshipIdx((internshipIdx + d + INTERNSHIPS.length) % INTERNSHIPS.length)} />
         )}
         {mode === "deskframe" && (
-          <img src="/photos/home.gif" alt="homepage demo" className="sp-img" />
+          <img src="/resume-cover.jpg" alt="résumé" className="sp-img sp-resume-thumb" onClick={() => setResumeOpen(true)} />
         )}
       </div>
 
-      {/* phone zoom — fullscreen phone mockup with demo GIFs */}
+      {/* phone zoom — fullscreen phone mockup with the contact card */}
       {mode === "phone" && (
         <div className="phone-zoom">
           <button className="phone-zoom-close" onClick={goBack} aria-label="close">×</button>
           <div className="phone-mockup">
             <div className="phone-island" />
-            <PhonePlayer idx={phoneGifIdx} />
+            <ContactCard lang={lang} />
             <div className="phone-homebar" />
           </div>
-          <button className="sp-btn phone-nav phone-nav-l" onClick={() => setPhoneGifIdx((phoneGifIdx + PHONE_GIFS.length - 1) % PHONE_GIFS.length)} aria-label="previous">‹</button>
-          <button className="sp-btn phone-nav phone-nav-r" onClick={() => setPhoneGifIdx((phoneGifIdx + 1) % PHONE_GIFS.length)} aria-label="next">›</button>
         </div>
       )}
 
       {/* fullscreen overlays */}
-      {papersBranch !== null && <ReadingOverlay branch={papersBranch} onClose={goBack} />}
+      {skillBranch !== null && <SkillOverlay branch={skillBranch} lang={lang} onClose={goBack} />}
       {noteOpen && <NoteOverlay lang={lang} onClose={() => setNoteOpen(false)} />}
       {aboutOpen && <AboutOverlay lang={lang} onClose={() => setAboutOpen(false)} />}
       {awardsOpen && <AwardsOverlay lang={lang} onClose={() => setAwardsOpen(false)} />}
       {booksOpen && <BooksOverlay lang={lang} onClose={() => setBooksOpen(false)} />}
+      {resumeOpen && <ResumeOverlay lang={lang} onClose={() => setResumeOpen(false)} />}
     </div>
   );
 }

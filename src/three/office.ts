@@ -627,7 +627,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
 
   makeInteractive(computer, {
     id: "computer",
-    label: l("💻 Click to sit down & play my projects", "💻 点击坐下，播放我的项目"),
+    label: l("💻 Click to sit down & browse my internships", "💻 点击坐下，看看我的实习经历"),
     action: focusScreen,
   });
 
@@ -827,7 +827,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   deskFrameG.add(deskFrameScreen);
   makeInteractive(deskFrameG, {
     id: "deskframe",
-    label: l("🖼️ My homepage demo — click to zoom & play", "🖼️ 我的主页演示——点击放大播放"),
+    label: l("📄 My résumé — click to view & download", "📄 我的简历——点击查看 / 下载"),
     action: () => {
       const wp = new THREE.Vector3();
       deskFrameScreen.getWorldPosition(wp);

@@ -242,7 +242,7 @@ export function screenTexture(): THREE.CanvasTexture {
     blob(820, 420, 300, "rgba(255,84,180,0.45)");
     blob(560, 120, 200, "rgba(255,200,64,0.35)");
     // app icons
-    const labels = ["AI Journey", "Postcard", "VocabTest", "IELTS", "Worksheet", "BookTail", "3D Word"];
+    const labels = ["ByteDance", "Xiaohongshu", "Bilibili", "Agent", "AIGC", "Resume", "Photos", "Contact"];
     labels.forEach((lb, i) => {
       const col = i % 4;
       const row = Math.floor(i / 4);
@@ -266,7 +266,7 @@ export function screenTexture(): THREE.CanvasTexture {
     ctx.fillStyle = "#ffd166";
     ctx.font = "bold 26px sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText("▶  Click me — Project Player", 28, h - 27);
+    ctx.fillText("▶  Click me — My Internships", 28, h - 27);
   });
 }
 

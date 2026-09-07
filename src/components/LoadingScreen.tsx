@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { playKnock } from "../lib/sound";
 
-const LOAD_TITLE = "Loading.. Zhihui's 3D Office";
+const LOAD_TITLE = "Loading.. Jinghan's 3D Office";
 const KNOCK_AT = 1900; // ms — matches the hand-knock CSS animation delay
 const INTRO_MIN = 3600; // ms — let the whole door/knock intro play out
 

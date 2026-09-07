@@ -1096,3 +1096,246 @@
   width: 20px; height: 20px; border-radius: 5px; object-fit: cover;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
 }
+
+/* ---------- internship player (inside screen overlay) ---------- */
+.isn-card {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: #f7f8fc;
+}
+.isn-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 12px 8px;
+  scrollbar-width: thin;
+}
+.isn-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.isn-logo {
+  flex-shrink: 0;
+  width: 30px; height: 30px;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.isn-headtext { flex: 1; min-width: 0; }
+.isn-company { font-size: 13px; font-weight: 800; color: #1a1b25; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.isn-role { font-size: 10px; color: #6b6e7c; font-weight: 600; }
+.isn-scene {
+  flex-shrink: 0;
+  font-size: 9px;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+.isn-headline {
+  margin-top: 8px;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.35;
+}
+.isn-bg {
+  margin-top: 5px;
+  font-size: 10px;
+  line-height: 1.5;
+  color: #55586a;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.isn-items {
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.isn-item {
+  background: #fff;
+  border: 1px solid #e8eaf2;
+  border-radius: 9px;
+  padding: 7px 9px;
+}
+.isn-item-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #1a1b25;
+}
+.isn-item-dot {
+  flex-shrink: 0;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.isn-item-desc {
+  margin-top: 3px;
+  font-size: 9.5px;
+  line-height: 1.45;
+  color: #55586a;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.isn-item-metric {
+  margin-top: 3px;
+  font-size: 10px;
+  font-weight: 800;
+}
+.isn-card .sp-bar { position: relative; }
+
+/* ---------- résumé thumbnail on desk frame zoom ---------- */
+.sp-resume-thumb { object-fit: contain; background: #fff; cursor: zoom-in; }
+
+/* ---------- résumé overlay ---------- */
+.sheet-resume {
+  width: min(920px, 94vw);
+  height: min(88vh, 1000px);
+  display: flex;
+  flex-direction: column;
+}
+.resume-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.resume-dl {
+  flex-shrink: 0;
+  padding: 9px 16px;
+  border-radius: 12px;
+  background: #d92332;
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  text-decoration: none;
+  transition: transform 0.15s;
+}
+.resume-dl:hover { transform: scale(1.04); }
+.resume-frame {
+  flex: 1;
+  width: 100%;
+  border: 1px solid #e8eaf2;
+  border-radius: 12px;
+  background: #fff;
+}
+
+/* ---------- contact card (phone mockup) ---------- */
+.cc-card {
+  width: 100%;
+  height: 100%;
+  border-radius: 42px;
+  background: linear-gradient(160deg, #fdf9f3 0%, #f2ecff 55%, #e8f4ff 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 22px 30px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+.cc-avatar {
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 6px 18px rgba(60, 40, 120, 0.25);
+}
+.cc-name {
+  margin-top: 14px;
+  font-size: 19px;
+  font-weight: 900;
+  color: #22232e;
+}
+.cc-tagline {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #6b6e7c;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.5;
+}
+.cc-rows {
+  margin-top: 20px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cc-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(120, 100, 200, 0.12);
+  border-radius: 14px;
+  padding: 11px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #2a2c3a;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(60, 40, 120, 0.07);
+  transition: transform 0.15s;
+  word-break: break-all;
+}
+.cc-row:hover { transform: scale(1.02); }
+.cc-ico { font-size: 15px; }
+.cc-title-tag {
+  margin-top: auto;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: #a5a8b8;
+  text-transform: uppercase;
+}
+
+/* ---------- skill detail card ---------- */
+.skill-card {
+  margin-top: 16px;
+  border: 2px solid;
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+}
+.skill-head {
+  padding: 14px 18px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.skill-name { font-size: 19px; font-weight: 900; }
+.skill-tagline { font-size: 12px; font-weight: 600; opacity: 0.92; }
+.skill-detail {
+  padding: 14px 18px 6px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #33364a;
+}
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 18px 16px;
+}
+.skill-chip {
+  border: 1.5px solid;
+  border-radius: 999px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  background: #fff;
+}

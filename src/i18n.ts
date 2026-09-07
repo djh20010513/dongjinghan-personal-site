@@ -13,18 +13,18 @@ export const l = (en: string, zh: string): L => ({ en, zh });
 export const t = (x: L, lang: Lang): string => x[lang];
 
 export const STR = {
-  loadingTitle: l("Loading Zhihui's 3D Office…", "正在加载淽卉的 3D 办公室…"),
+  loadingTitle: l("Loading Jinghan's 3D Office…", "正在加载静涵的 3D 办公室…"),
   loadingSub: l(
-    "Brewing coffee, waking up Ben 🐕, warming the projector 📽️",
-    "煮咖啡、叫醒大奔 🐕、预热灯光 💡"
+    "Brewing coffee, walking the dog 🐕, warming the projector 📽️",
+    "煮咖啡、遛狗 🐕、预热灯光 💡"
   ),
   idleHint: l(
     "🖱️ Drag to orbit · Right-drag to pan · Double-click to focus · Click objects",
     "🖱️ 左键旋转 · 右键平移 · 双击定位 · 点击物品探索"
   ),
   back: l("← Back", "← 返回"),
-  posterLabel: l("Research Poster", "研究海报"),
-  photoLabel: l("life beyond research", "科研之外的生活"),
+  posterLabel: l("Paper Cover", "论文封面"),
+  photoLabel: l("life beyond work", "工作之外的生活"),
   // note overlay
   noteTitle: l("Leave Me a Note", "给我留句话"),
   noteNamePh: l("Your name (optional)", "你的名字（可不填）"),
@@ -37,22 +37,30 @@ export const STR = {
   noteLocal: l("Notes are stored locally in this browser.", "留言仅保存在此浏览器本地。"),
   // photo story
   storyHint: l("‹ › to browse the wall", "‹ › 翻页浏览整面照片墙"),
+  // skills overlay
+  skillTitle: l("My Skills", "能力标签"),
+  // resume overlay
+  resumeTitle: l("My Résumé", "我的简历"),
+  resumeDownload: l("⬇ Download PDF", "⬇ 下载 PDF"),
+  // contact card (phone)
+  contactTitle: l("Contact Me", "联系我"),
+  contactTagline: l("AI Product Manager · always happy to talk AI & products", "AI 产品经理 · 随时聊聊 AI 与产品"),
 };
 
 // ---------- about (手帐本) ----------
 export const ABOUT = {
-  title: l("Hi! I'm Zhihui", "嗨！我是淽卉"),
+  title: l("Hi! I'm Jinghan", "嗨！我是静涵"),
   intro: l(
-    "PhD candidate at CUHK's Dept. of Curriculum & Instruction. I study how generative AI sparks creativity & motivation in language learners — and turn ideas into little tools.",
-    "香港中文大学课程与教学系在读博士生。我研究生成式 AI 如何点燃语言学习者的创造力与动机——并把灵感做成一个个小工具。"
+    "AI Product Manager — interned at ByteDance, Xiaohongshu and Bilibili, building Agent / AIGC products. Also an M.Eng. student at ECNU working on AI + water research. I turn business pain points into products that ship.",
+    "AI 产品经理——在字节跳动、小红书、哔哩哔哩实习，做 Agent / AIGC 产品；也是华东师范大学硕士生，研究 AI + 水利。我把业务痛点做成真正落地的产品。"
   ),
   factsTitle: l("Quick Facts · 小档案", "Quick Facts · 小档案"),
   facts: [
-    l("🎓 PhD Candidate, Curriculum & Instruction, CUHK (2024–)", "🎓 香港中文大学 课程与教学系 博士生 (2024–)"),
-    l("🔬 GenAI × language learning: creativity & motivation", "🔬 生成式 AI × 语言学习：创造力 & 动机"),
-    l("🗣 中文 · English · Español · Français", "🗣 中文 · English · Español · Français"),
-    l("📍 Hong Kong 香港", "📍 香港 Hong Kong"),
-    l("✉️ zhihuiz@link.cuhk.edu.hk", "✉️ zhihuiz@link.cuhk.edu.hk"),
+    l("💼 AI PM · ByteDance / Xiaohongshu / Bilibili", "💼 AI 产品经理 · 字节跳动 / 小红书 / 哔哩哔哩"),
+    l("🎓 M.Eng., ECNU (AI + Water) · GPA 3.80/4.0", "🎓 华东师范大学硕士（AI+水利）· GPA 3.80/4.0"),
+    l("📄 4 SCI papers, 2 as first author", "📄 4 篇 SCI 论文，2 篇一作"),
+    l("📍 Shanghai 上海", "📍 上海 Shanghai"),
+    l("✉️ djh1721695188@163.com", "✉️ djh1721695188@163.com"),
   ],
 };
 
@@ -60,16 +68,13 @@ export const ABOUT = {
 export const AWARDS = {
   title: l("Awards & Honors", "荣誉与奖项"),
   items: [
-    l("Duolingo Research Grant · 2025", "Duolingo 研究基金 · 2025"),
-    l("CUHK Vice-Chancellor's Scholarship · 2024", "香港中文大学校长奖学金 · 2024"),
-    l("CUHK Postgraduate Research Output Award · 2025", "港中文研究生研究成果奖 · 2025"),
-    l("AERA 2024 Poster Award (Finalist) · Division C", "AERA 2024 海报奖（入围）· Division C"),
-    l("Baidu AI Vibe Coding Best Communication Award · 2025", "百度 AI Vibe Coding 最佳传播奖 · 2025"),
-    l("RedBook AI Vibe Coding Best Developer Award · 2025", "小红书 AI Vibe Coding 最佳开发者奖 · 2025"),
-    l("TAL AI Vibe Coding Best Creativity Award · 2025", "好未来 AI Vibe Coding 最佳创意奖 · 2025"),
+    l("ECNU Academic Excellence Scholarship · 2025", "华东师范大学优秀学业奖学金 · 2025"),
+    l("First-Class Postgraduate Scholarship, ECNU · 2025", "华东师范大学研究生一等奖学金 · 2025"),
+    l("Shanghai Outstanding Graduate · 2024", "上海市优秀毕业生 · 2024"),
+    l("Outstanding League Cadre, Shanghai Ocean University · 2023", "上海海洋大学优秀团干部 · 2023"),
+    l("Outstanding Student, Shanghai Ocean University · 2022", "上海海洋大学优秀学生 · 2022"),
   ],
 };
-
 
 // ---------- bookshelf (书单) ----------
 export interface Book {
@@ -81,16 +86,14 @@ export interface Book {
 
 export const BOOKS = {
   title: l("My Bookshelf", "我的书单"),
-  subtitle: l("Books that shaped how I research, teach & parent", "塑造我研究、教学与育儿方式的书"),
-  categories: ["Research", "Parenting", "Fiction", "Family Reads"],
+  subtitle: l("Books that shaped how I think about products & AI", "塑造我产品与 AI 思考方式的书"),
+  categories: ["Product", "AI & Tech", "Thinking"],
   items: [
-    { tag: "Research", author: "Wayne C. Booth et al.", title: l("The Craft of Research", "研究是一门艺术"), note: l("The book I hand to every new researcher — how a question becomes an argument.", "送给每位研究新手的第一本书：问题如何变成论证。") },
-    { tag: "Research", author: "Paul J. Silvia", title: l("How to Write a Lot", "文思泉涌"), note: l("Writing is a habit, not a mood. Saved my PhD life.", "写作是习惯不是灵感——拯救了我的博士生活。") },
-    { tag: "Parenting", author: "Daniel J. Siegel & Tina Payne Bryson", title: l("The Whole-Brain Child", "全脑教养法"), note: l("Name it to tame it — works on toddlers and on PhD stress.", "说出情绪才能驯服情绪——对娃和读博焦虑都管用。") },
-    { tag: "Parenting", author: "Becky Kennedy", title: l("Good Inside", "看见孩子"), note: l("Two things are true: my kid is good inside, and so am I.", "两条同时成立：孩子内心是好的，我也是。") },
-    { tag: "Fiction", author: "Tara Westover", title: l("Educated", "你当像鸟飞往你的山"), note: l("On education as self-invention — read it twice.", "教育是自我发明——读了两遍。") },
-    { tag: "Fiction", author: "Antoine de Saint-Exupéry", title: l("The Little Prince", "小王子"), note: l("What is essential is invisible to the eye.", "真正重要的东西，眼睛是看不见的。") },
-    { tag: "Family Reads", author: "Eric Carle", title: l("The Very Hungry Caterpillar", "好饿的毛毛虫"), note: l("Baby's first English book — our bedtime staple.", "宝宝的第一本英文书——睡前保留节目。") },
-    { tag: "Family Reads", author: "Sam McBratney", title: l("Guess How Much I Love You", "猜猜我有多爱你"), note: l("I love you to the moon — and back.", "我爱你，一直到月亮那里——再绕回来。") },
+    { tag: "Product", author: "Marty Cagan", title: l("Inspired", "启示录"), note: l("How great product teams really work.", "优秀产品团队真正的工作方式。") },
+    { tag: "Product", author: "梁宁", title: l("Product Thinking 30 Lectures", "产品思维30讲"), note: l("Understanding users starts with understanding emotion.", "懂产品，先要懂情绪。") },
+    { tag: "AI & Tech", author: "Stuart Russell & Peter Norvig", title: l("Artificial Intelligence: A Modern Approach", "人工智能：一种现代的方法"), note: l("The classic that frames how I think about agents.", "塑造我 Agent 思维的经典教科书。") },
+    { tag: "AI & Tech", author: "Chip Huyen", title: l("AI Engineering", "AI 工程"), note: l("From model to product — the missing middle mile.", "从模型到产品之间最关键的一公里。") },
+    { tag: "Thinking", author: "Daniel Kahneman", title: l("Thinking, Fast and Slow", "思考，快与慢"), note: l("Why users don't decide the way you think.", "用户的决策方式，和你想的不一样。") },
+    { tag: "Thinking", author: "Peter Thiel", title: l("Zero to One", "从0到1"), note: l("My favorite question: what do you believe that few agree with?", "最喜欢的问题：在什么问题上你与多数人看法不同？") },
   ] as Book[],
 };
