@@ -17,9 +17,10 @@ export function WelcomeOverlay({ onClose }: { onClose: () => void }) {
         </p>
         <div className="welcome-grid">
           <div>💻 <b>Computer</b> — sit down &amp; browse my internships</div>
-          <div>🏷️ <b>Sticky notes</b> — my skill tags</div>
-          <div>🗺️ <b>World map</b> — my education journey</div>
+          <div>🏷️ <b>Skills wall</b> — 3 superpowers on sticky notes</div>
+          <div>🛠️ <b>Polaroid</b> — my vibe-coding work</div>
           <div>📋 <b>Blackboard</b> — 5 SCI papers &amp; DOI stickers</div>
+          <div>🎓 <b>Bookshelf</b> — my education</div>
           <div>📄 <b>Desk frame</b> — my résumé</div>
           <div>📱 <b>Phone</b> — contact me</div>
           <div>🏆 <b>Trophies</b> — awards &amp; honors</div>
@@ -344,9 +345,49 @@ export function AwardsOverlay({ lang, onClose }: { lang: Lang; onClose: () => vo
 }
 
 // ============================================================
-// Bookshelf — clicking the bookshelf opens this reading list
+// Bookshelf — clicking the bookshelf opens my education
 // ============================================================
 import { BOOKS } from "../i18n";
+import { EDUCATION } from "../data";
+import { certificateTexture } from "../three/textures";
+
+export function EducationOverlay({ lang, onClose }: { lang: Lang; onClose: () => void }) {
+  const certs = useMemo(
+    () =>
+      EDUCATION.map((edu) => {
+        const tex = certificateTexture(edu);
+        return (tex.image as HTMLCanvasElement).toDataURL("image/png");
+      }),
+    []
+  );
+  return (
+    <div className="sheet-backdrop reading" onClick={onClose}>
+      <div className="sheet sheet-reading sheet-books" onClick={(e) => e.stopPropagation()}>
+        <button className="panel-close" onClick={onClose} aria-label="close">×</button>
+        <h2 className="sheet-title reading-title">
+          {t(STR.eduTitle, lang)}
+          <img className="title-clip" src="/stickers/回形针.png" alt="" />
+        </h2>
+        <p className="books-subtitle">{t(STR.eduSubtitle, lang)}</p>
+        <div className="edu-grid">
+          {EDUCATION.map((edu, i) => (
+            <div className="edu-card" key={i}>
+              <img className="edu-cert" src={certs[i]} alt={edu.school} />
+              <div className="edu-info">
+                <div className="edu-school">{lang === "zh" ? edu.schoolZh : edu.school}</div>
+                <div className="edu-degree">{lang === "zh" ? edu.degreeZh : edu.degree}</div>
+                <div className="edu-meta">
+                  <span>🗓 {edu.year}</span>
+                  <span>📍 {lang === "zh" ? edu.placeZh : edu.place}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export const BOOK_TAG_COLORS: Record<string, string> = {
   Product: "#1f3a93",      // 藏青

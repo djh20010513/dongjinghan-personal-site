@@ -10,7 +10,6 @@ export interface EduItem {
   year: string;
   place: string;
   placeZh: string;
-  pin: { x: number; y: number }; // normalized position on the wall map
 }
 
 export const EDUCATION: EduItem[] = [
@@ -23,7 +22,6 @@ export const EDUCATION: EduItem[] = [
     year: "2024 —",
     place: "Shanghai, China",
     placeZh: "中国 · 上海",
-    pin: { x: 0.795, y: 0.365 },
   },
   {
     flag: "🇨🇳",
@@ -34,7 +32,6 @@ export const EDUCATION: EduItem[] = [
     year: "2020 — 2024",
     place: "Shanghai, China",
     placeZh: "中国 · 上海",
-    pin: { x: 0.815, y: 0.385 },
   },
 ];
 
@@ -200,29 +197,82 @@ export const SKILLS: Skill[] = [
       "Fluent with Claude Code, Qoder CN, WorkBuddy, Coze and Figma to build AI demos and interactive prototypes — this very 3D office was built with WorkBuddy.",
       "熟练使用 Claude Code、Qoder CN、WorkBuddy、Coze、Figma 搭建 AI Demo 与交互原型——你正在看的这个 3D 办公室就是用 WorkBuddy 搭的。"
     ),
-    chips: ["Claude Code", "Qoder CN", "WorkBuddy", "Coze", "Figma"],
+    chips: ["Claude Code", "Codex", "Qoder CN", "WorkBuddy", "Coze", "Figma"],
   },
   {
     id: "tech",
     name: l("AI Tech Understanding", "AI 技术理解能力"),
     tagline: l("Agent · RAG · Memory · Harness", "Agent · RAG · Memory · Harness"),
     detail: l(
-      "Familiar with Agent, RAG, Memory and Harness architectures; understand context management and tool-calling mechanisms. With 4 SCI papers published, I know where model capability boundaries lie and collaborate efficiently with algorithm & engineering teams.",
-      "熟悉 Agent、RAG、Memory、Harness 等 AI 技术体系，理解上下文管理与 Tool 调用机制；已发表 4 篇 SCI 论文，能够理解模型能力边界并与算法、研发高效协同。"
+      "Familiar with Agent, RAG, Memory and Harness architectures; understand context management and tool-calling mechanisms. With 5 SCI papers published, I know where model capability boundaries lie and collaborate efficiently with algorithm & engineering teams.",
+      "熟悉 Agent、RAG、Memory、Harness 等 AI 技术体系，理解上下文管理与 Tool 调用机制；已发表 5 篇 SCI 论文，能够理解模型能力边界并与算法、研发高效协同。"
     ),
-    chips: ["Agent", "RAG", "Memory", "Harness", "SCI × 4"],
+    chips: ["Agent", "RAG", "Memory", "Harness", "SCI × 5"],
   },
 ];
 
-/** sticky notes on the blackboard — one per skill + tech keywords */
-export const KEYWORDS: { text: string; branch: string; color: string }[] = [
-  { text: "Business Insight", branch: "business", color: "#ffe45e" },
-  { text: "Vibe Coding", branch: "vibe", color: "#9df2ff" },
-  { text: "AI Tech", branch: "tech", color: "#b6ff9d" },
-  { text: "Agent · RAG", branch: "tech", color: "#ffc59d" },
-  { text: "Memory", branch: "tech", color: "#d8b4fe" },
-  { text: "Harness", branch: "tech", color: "#ff9de2" },
+// ---------- 左墙：技能标签墙（3 大模块便签） ----------
+export interface SkillWallModule {
+  id: string;       // matches Skill.id → opens that skill card
+  title: L;
+  color: string;    // module title sticky color
+  tags: { text: string; color: string }[];
+}
+
+export const SKILL_WALL: SkillWallModule[] = [
+  {
+    id: "business",
+    title: l("Business Insight", "业务洞察能力"),
+    color: "#ffe45e",
+    tags: [
+      { text: "用户行为分析", color: "#fff3bf" },
+      { text: "业务数据洞察", color: "#fff9db" },
+      { text: "痛点抽象", color: "#ffe8cc" },
+      { text: "产品 0→1", color: "#fff3bf" },
+      { text: "GMV +12%", color: "#ffe066" },
+      { text: "决策链路优化", color: "#fff9db" },
+    ],
+  },
+  {
+    id: "vibe",
+    title: l("Vibe Coding", "Vibe Coding 能力"),
+    color: "#9df2ff",
+    tags: [
+      { text: "Claude Code", color: "#d0ebff" },
+      { text: "Codex", color: "#e7f5ff" },
+      { text: "Qoder CN", color: "#d0ebff" },
+      { text: "WorkBuddy", color: "#e7f5ff" },
+      { text: "Coze", color: "#d0ebff" },
+      { text: "Figma", color: "#e7f5ff" },
+    ],
+  },
+  {
+    id: "tech",
+    title: l("AI Tech Understanding", "AI 技术理解能力"),
+    color: "#b6ff9d",
+    tags: [
+      { text: "Agent", color: "#d3f9d8" },
+      { text: "RAG", color: "#e9fac8" },
+      { text: "Memory", color: "#d3f9d8" },
+      { text: "Harness", color: "#e9fac8" },
+      { text: "上下文管理", color: "#d3f9d8" },
+      { text: "Tool 调用 · SCI × 5", color: "#e9fac8" },
+    ],
+  },
 ];
+
+// ---------- 左墙：Vibe Coding 作品展示 ----------
+export const VIBE_WORK = {
+  title: l("My Vibe Coding Work", "我的 Vibe Coding 作品"),
+  name: l("This 3D Office — dongjinghan.cn", "3D 个人办公室 · dongjinghan.cn"),
+  desc: l(
+    "Designed & built end-to-end with AI coding tools — Three.js scene, React UI and all content iterated in conversation.",
+    "用 AI 编程工具从 0 到 1 搭建——Three.js 场景、React 界面与全部内容都在对话中迭代完成。"
+  ),
+  tools: ["WorkBuddy", "Claude Code", "Three.js", "React"],
+  cover: "/work/vibe1.jpg",
+  link: "https://github.com/djh20010513/dongjinghan-personal-site",
+};
 
 // ---------- 论文（黑板 + 投影仪） ----------
 export interface Paper {

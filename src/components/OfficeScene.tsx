@@ -25,7 +25,7 @@ export default function OfficeScene({
       onOpenNote: () => eventsRef.current.onOpenNote(),
       onOpenAbout: () => eventsRef.current.onOpenAbout(),
       onOpenAwards: () => eventsRef.current.onOpenAwards(),
-      onOpenBooks: () => eventsRef.current.onOpenBooks(),
+      onOpenEducation: () => eventsRef.current.onOpenEducation(),
       onMusicToggle: (p) => eventsRef.current.onMusicToggle(p),
     });
     handlesRef.current = handles;

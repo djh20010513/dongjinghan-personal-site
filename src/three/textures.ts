@@ -282,58 +282,203 @@ export function labelTexture(text: string, fg = "#fff", font = "bold 48px sans-s
   });
 }
 
-/** Floating education card shown directly on the world map */
-export function eduLabelTexture(edu: {
-  flag: string; school: string; schoolZh: string; degree: string; degreeZh: string;
-  year: string; place: string; placeZh: string;
-}, lang: "en" | "zh" = "en"): THREE.CanvasTexture {
-  return canvasTex(1024, 384, (ctx, w, h) => {
-    // card
-    ctx.fillStyle = "rgba(20, 33, 61, 0.94)";
-    ctx.beginPath();
-    ctx.roundRect(6, 6, w - 12, h - 12, 36);
-    ctx.fill();
-    ctx.strokeStyle = "#ffd166";
-    ctx.lineWidth = 6;
-    ctx.stroke();
-    // flag
-    ctx.font = "120px serif";
-    ctx.textAlign = "left";
-    ctx.textBaseline = "middle";
-    ctx.fillText(edu.flag, 50, h / 2 + 8);
-    // year badge
-    ctx.fillStyle = "#c41e3a";
-    ctx.beginPath();
-    ctx.roundRect(230, 50, 240, 72, 36);
-    ctx.fill();
-    ctx.fillStyle = "#fff";
-    ctx.font = "bold 44px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText(edu.year, 350, 90);
-    // school
-    ctx.fillStyle = "#ffd166";
-    ctx.font = lang === "zh" ? "bold 52px 'PingFang SC', 'Microsoft YaHei', sans-serif" : "bold 46px Georgia, serif";
-    ctx.textAlign = "left";
-    const schoolFull = lang === "zh" ? edu.schoolZh : edu.school;
-    const school = schoolFull.length > 38 ? schoolFull.slice(0, 37) + "…" : schoolFull;
-    ctx.fillText(school, 230, 190);
-    // degree + place
-    ctx.fillStyle = "rgba(255,255,255,0.9)";
-    ctx.font = lang === "zh" ? "42px 'PingFang SC', 'Microsoft YaHei', sans-serif" : "40px sans-serif";
-    ctx.fillText(lang === "zh" ? `${edu.degreeZh} · ${edu.placeZh}` : `${edu.degree} · ${edu.place}`, 230, 268);
+/** Cork board background for the skill-tag wall */
+export function corkTexture(): THREE.CanvasTexture {
+  return canvasTex(512, 512, (ctx, w, h) => {
+    ctx.fillStyle = "#c9a06c";
+    ctx.fillRect(0, 0, w, h);
+    // cork speckle
+    for (let i = 0; i < 5200; i++) {
+      const x = Math.random() * w, y = Math.random() * h;
+      const r = 0.8 + Math.random() * 2.4;
+      ctx.fillStyle = Math.random() > 0.5 ? "rgba(140, 95, 50, 0.25)" : "rgba(230, 195, 145, 0.28)";
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // faint grain streaks
+    ctx.strokeStyle = "rgba(120, 80, 40, 0.10)";
+    for (let i = 0; i < 26; i++) {
+      const y = Math.random() * h;
+      ctx.lineWidth = 1 + Math.random() * 2;
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.bezierCurveTo(w * 0.3, y + 8, w * 0.7, y - 8, w, y + 4);
+      ctx.stroke();
+    }
   });
 }
 
-/** Map frame title strip */
-export function mapTitleTexture(lang: "en" | "zh" = "en"): THREE.CanvasTexture {
-  return canvasTex(1024, 128, (ctx, w, h) => {
-    ctx.fillStyle = "#14213d";
+/**
+ * Sticky note with a washi-tape strip (and optional pin) — the skill-wall style.
+ * tape: css color of the diagonal tape at the top; pin: draw a red pushpin dot.
+ */
+export function tagNoteTexture(
+  text: string,
+  bg: string,
+  opts: { tape?: string; pin?: boolean; fontPx?: number; bold?: boolean } = {}
+): THREE.CanvasTexture {
+  const { tape, pin = false, fontPx = 34, bold = true } = opts;
+  return canvasTex(320, 320, (ctx, w, h) => {
+    // paper + soft edge shadow
+    ctx.fillStyle = bg;
     ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = "#ffd166";
-    ctx.font = lang === "zh" ? "bold 54px 'PingFang SC', 'Microsoft YaHei', sans-serif" : "bold 56px Georgia, serif";
+    ctx.strokeStyle = "rgba(0,0,0,0.10)";
+    ctx.lineWidth = 3;
+    ctx.strokeRect(2, 2, w - 4, h - 4);
+    // folded corner
+    ctx.fillStyle = "rgba(0,0,0,0.10)";
+    ctx.beginPath();
+    ctx.moveTo(w, h - 40);
+    ctx.lineTo(w - 40, h);
+    ctx.lineTo(w, h);
+    ctx.fill();
+    // text (auto-wrap by \n)
+    ctx.fillStyle = "#2b2b3a";
+    ctx.font = `${bold ? "bold " : ""}${fontPx}px 'Comic Sans MS', 'Chalkboard SE', 'PingFang SC', cursive`;
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText(lang === "zh" ? "✈  我的求学之旅  ✈" : "✈  My Education Journey  ✈", w / 2, h / 2);
+    const lines = text.split("\n");
+    const lineH = fontPx * 1.28;
+    lines.forEach((ln, i) => {
+      ctx.fillText(ln, w / 2, h / 2 - ((lines.length - 1) * lineH) / 2 + i * lineH + 8);
+    });
+    // washi tape — semi-transparent strip across the top, slightly tilted
+    if (tape) {
+      ctx.save();
+      ctx.translate(w / 2, 16);
+      ctx.rotate(-0.05);
+      ctx.fillStyle = tape;
+      ctx.globalAlpha = 0.75;
+      ctx.fillRect(-86, -18, 172, 40);
+      // tape serrated ends
+      ctx.globalAlpha = 0.4;
+      ctx.fillRect(-90, -18, 8, 40);
+      ctx.fillRect(82, -18, 8, 40);
+      ctx.restore();
+    }
+    // pushpin
+    if (pin) {
+      const g = ctx.createRadialGradient(w / 2 - 4, 20, 2, w / 2, 26, 20);
+      g.addColorStop(0, "#ff8fa3");
+      g.addColorStop(1, "#c2255c");
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(w / 2, 26, 17, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "rgba(0,0,0,0.18)";
+      ctx.beginPath();
+      ctx.ellipse(w / 2, 44, 12, 5, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  });
+}
+
+/** Graduation certificate for the education frames */
+export function certificateTexture(edu: {
+  flag: string; school: string; schoolZh: string; degree: string; degreeZh: string;
+  year: string; place: string; placeZh: string;
+}): THREE.CanvasTexture {
+  return canvasTex(768, 1056, (ctx, w, h) => {
+    /** shrink font until the text fits maxW */
+    const fitText = (text: string, y: number, basePx: number, font: (px: number) => string, maxW: number, minPx = 20) => {
+      let px = basePx;
+      ctx.font = font(px);
+      while (px > minPx && ctx.measureText(text).width > maxW) {
+        px -= 2;
+        ctx.font = font(px);
+      }
+      ctx.fillText(text, w / 2, y);
+    };
+    // cream paper
+    ctx.fillStyle = "#fbf6e9";
+    ctx.fillRect(0, 0, w, h);
+    // double gold border
+    ctx.strokeStyle = "#b98a2f";
+    ctx.lineWidth = 10;
+    ctx.strokeRect(26, 26, w - 52, h - 52);
+    ctx.lineWidth = 3;
+    ctx.strokeRect(46, 46, w - 92, h - 92);
+    // header
+    ctx.fillStyle = "#7a1f1f";
+    ctx.font = "bold 64px Georgia, 'Songti SC', serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText("毕业证书", w / 2, 130);
+    ctx.fillStyle = "#8a6d2f";
+    ctx.font = "30px Georgia, serif";
+    ctx.fillText("CERTIFICATE OF GRADUATION", w / 2, 185);
+    // divider
+    ctx.strokeStyle = "#b98a2f";
+    ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(120, 225); ctx.lineTo(w - 120, 225); ctx.stroke();
+    // flag + school
+    ctx.font = "90px serif";
+    ctx.fillText(edu.flag, w / 2, 310);
+    ctx.fillStyle = "#1f2a44";
+    fitText(edu.schoolZh, 415, 52, (px) => `bold ${px}px 'PingFang SC', 'Songti SC', sans-serif`, w - 150);
+    ctx.fillStyle = "#4a4a5a";
+    fitText(edu.school, 465, 30, (px) => `italic ${px}px Georgia, serif`, w - 150);
+    // degree (auto-wrap to two lines when too long)
+    ctx.fillStyle = "#2b2b3a";
+    const degFont = (px: number) => `${px}px 'PingFang SC', sans-serif`;
+    ctx.font = degFont(34);
+    if (ctx.measureText(edu.degreeZh).width <= w - 170) {
+      fitText(edu.degreeZh, 560, 34, degFont, w - 170);
+    } else {
+      // split at the middle separator for a balanced two-line layout
+      const parts = edu.degreeZh.split("·").map((s) => s.trim()).filter(Boolean);
+      const mid = Math.ceil(parts.length / 2);
+      const line1 = parts.slice(0, mid).join(" · ");
+      const line2 = parts.slice(mid).join(" · ");
+      fitText(line1, 540, 32, degFont, w - 170);
+      fitText(line2, 588, 32, degFont, w - 170);
+    }
+    // year + place
+    ctx.fillStyle = "#7a1f1f";
+    ctx.font = "bold 40px Georgia, serif";
+    ctx.fillText(edu.year, w / 2, 650);
+    ctx.fillStyle = "#4a4a5a";
+    ctx.font = "30px 'PingFang SC', sans-serif";
+    ctx.fillText(edu.placeZh, w / 2, 705);
+    // seal
+    ctx.save();
+    ctx.translate(w - 170, h - 180);
+    ctx.strokeStyle = "rgba(196, 30, 58, 0.85)";
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(0, 0, 78, 0, Math.PI * 2); ctx.stroke();
+    ctx.fillStyle = "rgba(196, 30, 58, 0.85)";
+    ctx.font = "bold 34px 'PingFang SC', sans-serif";
+    ctx.fillText("荣誉", 0, -18);
+    ctx.fillText("典藏", 0, 22);
+    // star
+    ctx.font = "30px serif";
+    ctx.fillText("★", 0, -52);
+    ctx.restore();
+    // signature squiggle
+    ctx.strokeStyle = "#3a3a4a";
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(120, h - 160);
+    ctx.bezierCurveTo(180, h - 210, 240, h - 130, 310, h - 180);
+    ctx.stroke();
+    ctx.font = "italic 26px Georgia, serif";
+    ctx.fillStyle = "#4a4a5a";
+    ctx.textAlign = "left";
+    ctx.fillText("Jinghan Dong", 120, h - 120);
+  });
+}
+
+/** Dark title strip used above the skill wall / work frame */
+export function stripTexture(text: string, bg = "#14213d", fg = "#ffd166"): THREE.CanvasTexture {
+  return canvasTex(1024, 128, (ctx, w, h) => {
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = fg;
+    ctx.font = "bold 54px 'PingFang SC', Georgia, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillText(text, w / 2, h / 2);
   });
 }
 

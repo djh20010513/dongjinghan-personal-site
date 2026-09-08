@@ -8,13 +8,13 @@ import {
   roundRugTexture,
   stickyTexture,
   screenTexture,
-  mapTitleTexture,
-  eduLabelTexture,
   doiBadgeTexture,
+  corkTexture,
+  tagNoteTexture,
+  stripTexture,
 } from "./textures";
-import { EDUCATION, KEYWORDS, PHOTOS, PHOTO_ASPECTS, PHOTO_WALL_PATTERN, PUBLISHED, COVER_ASPECTS } from "../data";
-import { l, type L, type Lang } from "../i18n";
-import { playPour } from "../lib/sound";
+import { PHOTOS, PHOTO_ASPECTS, PHOTO_WALL_PATTERN, PUBLISHED, COVER_ASPECTS, SKILL_WALL, VIBE_WORK } from "../data";
+import { l, t, type L, type Lang } from "../i18n";
 
 // ============================================================
 // Types
@@ -33,10 +33,10 @@ export interface OfficeCallbacks {
   onPhotoIndex: (index: number) => void;
   onPosterIndex: (index: number) => void;
   onOpenPapers: (branch: string) => void;
+  onOpenEducation: () => void;
   onOpenNote: () => void;
   onOpenAbout: () => void;
   onOpenAwards: () => void;
-  onOpenBooks: () => void;
   onMusicToggle: (playing: boolean) => void;
 }
 
@@ -444,37 +444,6 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     });
   });
 
-  // ---- keyword sticky notes pinned on the board's right side ----
-  // big font, irregular tilts, scattered 2 cols × 3 rows right of the poster
-  const BOARD_VIEW_CAM: [number, number, number] = [-0.3, 2.3, -2.4];
-  const BOARD_VIEW_TARGET: [number, number, number] = [-0.3, 2.2, -5.4];
-  const kwSpots: [number, number, number][] = [
-    [4.9, 0.72, 0.14], [5.75, 0.6, -0.1],
-    [4.8, -0.05, -0.16], [5.8, -0.12, 0.09],
-    [4.95, -0.78, 0.12], [5.75, -0.85, -0.13],
-  ];
-  KEYWORDS.forEach((kw, i) => {
-    const note = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.62, 0.62),
-      new THREE.MeshStandardMaterial({ map: stickyTexture(kw.text.split(" ").join("\n"), kw.color, "", true), roughness: 0.9 })
-    );
-    note.castShadow = true;
-    const g = new THREE.Group();
-    const [kx, ky, kr] = kwSpots[i];
-    g.position.set(kx, ky, 0.05);
-    g.rotation.z = kr;
-    g.add(note);
-    board.add(g);
-    makeInteractive(g, {
-      id: `kw-${i}`,
-      label: l(`🏷️ ${kw.text} — see related papers`, `🏷️ ${kw.text}——查看相关论文`),
-      action: () => {
-        focusCam(BOARD_VIEW_CAM, BOARD_VIEW_TARGET, "desk");
-        cb.onOpenPapers(kw.branch);
-      },
-    });
-  });
-
   // blank guest note stays on the wall below the board, layered over an envelope sticker
   const envelopeTex = texLoader.load("/stickers/留言板信封.png");
   envelopeTex.colorSpace = THREE.SRGBColorSpace;
@@ -502,92 +471,165 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   });
 
   // ----------------------------------------------------------
-  // Left wall: world map + ALWAYS-ON education labels
+  // Left wall: corkboard — skill-tag modules + vibe-coding work
   // ----------------------------------------------------------
   let currentLang: Lang = "en";
 
-  const mapGroup = new THREE.Group();
-  mapGroup.position.set(-W / 2 + 0.03, 2.55, -0.6);
-  mapGroup.rotation.y = Math.PI / 2;
-  room.add(mapGroup);
+  const wallG = new THREE.Group();
+  wallG.position.set(-W / 2 + 0.03, 2.55, -0.6);
+  wallG.rotation.y = Math.PI / 2;
+  room.add(wallG);
 
-  const MAP_W = 5.2, MAP_H = 2.925;
-  mapGroup.add(box(MAP_W + 0.24, MAP_H + 0.55, 0.06, std(0xdcd8cf, 0.6), 0, 0.12, -0.03)); // light gray panel
-  const mapTex = texLoader.load("/textures/map.png");
-  mapTex.colorSpace = THREE.SRGBColorSpace;
-  mapGroup.add(new THREE.Mesh(new THREE.PlaneGeometry(MAP_W, MAP_H), new THREE.MeshBasicMaterial({ map: mapTex, transparent: true })));
-  (mapGroup.children[1] as THREE.Mesh).position.set(0, -0.1, 0.01);
-
-  const titleStripMat = new THREE.MeshBasicMaterial({ map: mapTitleTexture(currentLang), transparent: true });
-  const titleStrip = new THREE.Mesh(
-    new THREE.PlaneGeometry(MAP_W * 0.72, 0.36),
-    titleStripMat
+  const WALL_W = 5.2, WALL_H = 2.925;
+  // wooden frame + cork board
+  wallG.add(box(WALL_W + 0.24, WALL_H + 0.55, 0.06, std(0xb5855c, 0.75), 0, 0.12, -0.03));
+  const corkTex = corkTexture();
+  corkTex.wrapS = corkTex.wrapT = THREE.RepeatWrapping;
+  corkTex.repeat.set(3, 2);
+  const cork = new THREE.Mesh(
+    new THREE.PlaneGeometry(WALL_W, WALL_H),
+    new THREE.MeshStandardMaterial({ map: corkTex, roughness: 0.95 })
   );
-  titleStrip.position.set(0, MAP_H / 2 + 0.12, 0.02);
-  mapGroup.add(titleStrip);
+  cork.position.set(0, -0.05, 0.005);
+  wallG.add(cork);
 
+  /** materials that must be re-generated when the UI language switches */
+  const langMats: { mat: THREE.MeshBasicMaterial; make: (lang: Lang) => THREE.CanvasTexture }[] = [];
+  const regLang = (mat: THREE.MeshBasicMaterial, make: (lang: Lang) => THREE.CanvasTexture) => {
+    langMats.push({ mat, make });
+  };
+
+  const wallTitleMat = new THREE.MeshBasicMaterial({
+    map: stripTexture(t(l("My Skills Wall", "我的能力墙"), currentLang)),
+    transparent: true,
+  });
+  regLang(wallTitleMat, (lang) => stripTexture(t(l("My Skills Wall", "我的能力墙"), lang)));
+  const titleStrip = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 0.42), wallTitleMat);
+  titleStrip.position.set(0, WALL_H / 2 + 0.18, 0.02);
+  wallG.add(titleStrip);
+
+  // pulsing rings pinned onto the wall (driven by the tick loop)
   const pins: THREE.Mesh[] = [];
-  const labelPos: [number, number][] = [
-    [0.05, -0.98],   // Spain card
-    [-1.68, -0.66],  // USC card
-    [1.62, -0.55],   // CUHK card
-  ];
-  const eduLabelMats: THREE.MeshBasicMaterial[] = [];
-  EDUCATION.forEach((edu, i) => {
-    const px = (edu.pin.x - 0.5) * MAP_W;
-    const py = (0.5 - edu.pin.y) * MAP_H - 0.1;
-    const pinG = new THREE.Group();
-    pinG.position.set(px, py, 0.05);
-    pinG.add(new THREE.Mesh(
-      new THREE.SphereGeometry(0.06, 16, 16),
-      new THREE.MeshStandardMaterial({ color: 0xc41e3a, emissive: 0xc41e3a, emissiveIntensity: 0.8 })
-    ));
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.09, 0.115, 24),
-      new THREE.MeshBasicMaterial({ color: 0xc41e3a, transparent: true, opacity: 0.8, side: THREE.DoubleSide })
-    );
-    ring.userData.phase = i * 1.3;
-    pinG.add(ring);
-    pins.push(ring);
-    mapGroup.add(pinG);
 
-    const [lx, ly] = labelPos[i];
-    const labelMat = new THREE.MeshBasicMaterial({ map: eduLabelTexture(edu, currentLang), transparent: true });
-    eduLabelMats.push(labelMat);
-    const label = new THREE.Mesh(
-      new THREE.PlaneGeometry(1.5, 0.56),
-      labelMat
-    );
-    label.position.set(lx, ly, 0.04);
-    mapGroup.add(label);
-    const lineGeo = new THREE.BufferGeometry().setFromPoints([
-      new THREE.Vector3(px, py, 0.035),
-      new THREE.Vector3(lx + (px - lx) * 0.42, ly + (py - ly) * 0.42, 0.035),
-    ]);
-    mapGroup.add(new THREE.Line(lineGeo, new THREE.LineBasicMaterial({ color: 0xc41e3a })));
+  // ---- left column: vibe-coding work (polaroid pinned on the cork) ----
+  const vibeG = new THREE.Group();
+  vibeG.position.set(-1.82, 0.08, 0.03);
+  vibeG.rotation.z = -0.035;
+  wallG.add(vibeG);
+  // white polaroid paper
+  const vibePaper = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.24, 1.62),
+    new THREE.MeshStandardMaterial({ color: 0xfffef8, roughness: 0.9 })
+  );
+  vibePaper.castShadow = true;
+  vibeG.add(vibePaper);
+  // work screenshot
+  const vibeCoverTex = texLoader.load(VIBE_WORK.cover);
+  vibeCoverTex.colorSpace = THREE.SRGBColorSpace;
+  const vibeCover = new THREE.Mesh(
+    new THREE.PlaneGeometry(1.06, 0.8),
+    new THREE.MeshBasicMaterial({ map: vibeCoverTex })
+  );
+  vibeCover.position.set(0, 0.33, 0.012);
+  vibeG.add(vibeCover);
+  // caption strip under the photo
+  const vibeCapMat = new THREE.MeshBasicMaterial({
+    map: tagNoteTexture(t(VIBE_WORK.name, currentLang), "#fffef8", { fontPx: 30 }),
+    transparent: true,
+  });
+  regLang(vibeCapMat, (lang) => tagNoteTexture(t(VIBE_WORK.name, lang), "#fffef8", { fontPx: 30 }));
+  const vibeCap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, 0.42), vibeCapMat);
+  vibeCap.position.set(0, -0.44, 0.012);
+  vibeG.add(vibeCap);
+  // washi tape on top of the polaroid
+  const tape = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.5, 0.16),
+    new THREE.MeshBasicMaterial({ color: 0x9df2ff, transparent: true, opacity: 0.75 })
+  );
+  tape.position.set(0, 0.86, 0.014);
+  tape.rotation.z = 0.04;
+  vibeG.add(tape);
+  makeInteractive(vibeG, {
+    id: "vibe-work",
+    label: l("🛠️ My vibe-coding work — open it", "🛠️ 我的 Vibe Coding 作品——点我看看"),
+    action: () => window.open(VIBE_WORK.link, "_blank", "noopener"),
   });
 
-  /** switch UI language — regenerates the map's canvas-texture labels */
+  // ---- right area: 3 skill modules, tags pinned like sticky notes ----
+  const MOD_X = [-0.42, 0.86, 2.14];
+  const MOD_TILT = [-0.02, 0.015, -0.025];
+  const TAG_TILT = [0.05, -0.06, 0.04, -0.05, 0.06, -0.04];
+  const WALL_CAM: [number, number, number] = [-3.3, 2.55, -0.6];
+  const WALL_TARGET: [number, number, number] = [-6.44, 2.5, -0.6];
+  SKILL_WALL.forEach((mod, mi) => {
+    const g = new THREE.Group();
+    g.position.set(MOD_X[mi], -0.02, 0.03);
+    g.rotation.z = MOD_TILT[mi];
+    wallG.add(g);
+    // paper sheet
+    const sheet = new THREE.Mesh(
+      new THREE.PlaneGeometry(1.16, 2.5),
+      new THREE.MeshStandardMaterial({ color: 0xfffef5, roughness: 0.9 })
+    );
+    sheet.castShadow = true;
+    g.add(sheet);
+    // module title sticky (with pushpin) — bilingual, refreshed on language switch
+    const titleMat = new THREE.MeshBasicMaterial({
+      map: tagNoteTexture(t(mod.title, currentLang), mod.color, { pin: true, fontPx: 40 }),
+      transparent: true,
+    });
+    regLang(titleMat, (lang) => tagNoteTexture(t(mod.title, lang), mod.color, { pin: true, fontPx: 40 }));
+    const titleNote = new THREE.Mesh(new THREE.PlaneGeometry(1.04, 0.52), titleMat);
+    titleNote.position.set(0, 0.92, 0.012);
+    titleNote.rotation.z = mi % 2 === 0 ? 0.03 : -0.03;
+    g.add(titleNote);
+    // tag stickies — 2 cols × 3 rows
+    mod.tags.forEach((tag, ti) => {
+      const tagMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(0.48, 0.32),
+        new THREE.MeshBasicMaterial({ map: tagNoteTexture(tag.text, tag.color, { fontPx: 30 }), transparent: true })
+      );
+      tagMesh.position.set(ti % 2 === 0 ? -0.27 : 0.27, 0.42 - Math.floor(ti / 2) * 0.52, 0.012);
+      tagMesh.rotation.z = TAG_TILT[ti % TAG_TILT.length];
+      g.add(tagMesh);
+    });
+    // pulse ring hint on the module
+    const ring = new THREE.Mesh(
+      new THREE.RingGeometry(0.07, 0.095, 24),
+      new THREE.MeshBasicMaterial({ color: 0xc41e3a, transparent: true, opacity: 0.8, side: THREE.DoubleSide })
+    );
+    ring.userData.phase = mi * 1.3;
+    ring.position.set(0.48, 1.12, 0.014);
+    g.add(ring);
+    pins.push(ring);
+    makeInteractive(g, {
+      id: `skill-${mod.id}`,
+      label: l(`🏷️ ${t(mod.title, "en")} — see details`, `🏷️ ${t(mod.title, "zh")}——查看详情`),
+      action: () => {
+        focusCam(WALL_CAM, WALL_TARGET, "map");
+        cb.onOpenPapers(mod.id);
+      },
+    });
+  });
+
+  // click the cork itself → just focus the wall
+  makeInteractive(cork, {
+    id: "skillwall",
+    label: l("🏷️ My skills wall — click to zoom in", "🏷️ 我的能力墙——点击放大"),
+    action: () => focusCam(WALL_CAM, WALL_TARGET, "map"),
+  });
+
+  /** switch UI language — regenerates the wall's canvas-texture labels */
   function setLang(lang: Lang) {
     if (lang === currentLang) return;
     currentLang = lang;
-    EDUCATION.forEach((edu, i) => {
-      const old = eduLabelMats[i].map;
-      eduLabelMats[i].map = eduLabelTexture(edu, lang);
-      eduLabelMats[i].needsUpdate = true;
+    langMats.forEach(({ mat, make }) => {
+      const old = mat.map;
+      mat.map = make(lang);
+      mat.needsUpdate = true;
       old?.dispose();
     });
-    const oldTitle = titleStripMat.map;
-    titleStripMat.map = mapTitleTexture(lang);
-    titleStripMat.needsUpdate = true;
-    oldTitle?.dispose();
   }
-
-  makeInteractive(mapGroup, {
-    id: "map",
-    label: l("🗺️ World map — my education journey", "🗺️ 世界地图——我的求学之旅"),
-    action: () => focusCam([-3.3, 2.55, -0.6], [-6.44, 2.5, -0.6], "map"),
-  });
 
   // ----------------------------------------------------------
   // Desk (user-scanned GLB) — center of the room, extra large
@@ -649,7 +691,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   });
   makeInteractive(kbG, {
     id: "keyboard",
-    label: l("⌨️ Click to play my projects", "⌨️ 点击播放我的项目"),
+    label: l("⌨️ Click to sit down & browse my internships", "⌨️ 点击坐下，看看我的实习经历"),
     action: focusScreen,
   });
 
@@ -664,16 +706,8 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   });
   makeInteractive(mouseG, {
     id: "mouse",
-    label: l("🖱️ Click to play my projects", "🖱️ 点击播放我的项目"),
+    label: l("🖱️ Click to sit down & browse my internships", "🖱️ 点击坐下，看看我的实习经历"),
     action: focusScreen,
-  });
-
-  // ---- calendar moved to the back row (same line as the pen holder) so it never blocks the phone ----
-  const calG = new THREE.Group();
-  calG.position.set(0.58, DESK_TOP_Y, -0.15);
-  deskG.add(calG);
-  gltfLoader.load("/models/calendar.glb", (gltf) => {
-    calG.add(prepSized(gltf.scene, 0.36).group); // → ~0.28m tall
   });
 
   // ---- water cup (user scan) — nudged outward toward the chair ----
@@ -684,46 +718,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     mug.add(prepSized(gltf.scene, 0.16).group); // → ~0.11m tall
   });
 
-  const teaG = new THREE.Group();
-  teaG.position.set(0.95, DESK_TOP_Y, 0.14);
-  deskG.add(teaG);
-  gltfLoader.load("/models/teatin.glb", (gltf) => {
-    teaG.add(prepSized(gltf.scene, 0.151).group); // → ~0.14m tall
-  });
-
-  // ---- teapot (user scan) — click it or the mug to pour water (sound + tilt animation) ----
-  const teapotG = new THREE.Group();
-  teapotG.position.set(0.38, DESK_TOP_Y, 0.28);
-  deskG.add(teapotG);
-  gltfLoader.load("/models/茶壶.glb", (gltf) => {
-    teapotG.add(prepSized(gltf.scene, 0.24).group); // → ~0.2m tall
-  });
-  let pouring = false;
-  const pourWater = () => {
-    if (pouring) return;
-    pouring = true;
-    playPour();
-    const home = { x: 0.38, y: DESK_TOP_Y, z: 0.28 };
-    const target = { x: mug.position.x + 0.1, y: DESK_TOP_Y + 0.22, z: mug.position.z + 0.02 };
-    const tl = gsap.timeline({ onComplete: () => { pouring = false; } });
-    tl.to(teapotG.position, { x: target.x, y: target.y, z: target.z, duration: 0.5, ease: "power2.inOut" })
-      .to(teapotG.rotation, { z: 0.85, duration: 0.35, ease: "power2.inOut" }, "<0.1")
-      .to({}, { duration: 1.3 }) // hold the pour
-      .to(teapotG.rotation, { z: 0, duration: 0.35, ease: "power2.inOut" })
-      .to(teapotG.position, { x: home.x, y: home.y, z: home.z, duration: 0.5, ease: "power2.inOut" }, "<0.1");
-  };
-  makeInteractive(teapotG, {
-    id: "teapot",
-    label: l("🫖 Teapot — click to pour some tea", "🫖 茶壶——点击倒茶"),
-    action: pourWater,
-  });
-  makeInteractive(mug, {
-    id: "mug",
-    label: l("🥛 My yellow mug — click to pour some tea", "🥛 我的黄色水杯——点击倒茶"),
-    action: pourWater,
-  });
-
-  // ---- pen holder behind the mug & tea tin, enlarged ----
+  // ---- pen holder behind the mug, enlarged ----
   const penG = new THREE.Group();
   penG.position.set(0.9, DESK_TOP_Y, -0.14);
   deskG.add(penG);
@@ -771,7 +766,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   });
   makeInteractive(phoneG, {
     id: "phone",
-    label: l("📱 Phone — zoom in & watch my demos", "📱 手机——放大看我的演示"),
+    label: l("📱 Phone — zoom in for my contact card", "📱 手机——放大看我的名片"),
     action: () => {
       const wp = new THREE.Vector3();
       phoneScreen.getWorldPosition(wp);
@@ -835,7 +830,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     },
   });
 
-  // ---- journal / 手帐本 (user scan, front-right corner) — click for "Hi, I'm Zhihui" ----
+  // ---- journal / 手帐本 (user scan, front-right corner) — click for "Hi, I'm Jinghan" ----
   const journalG = new THREE.Group();
   journalG.position.set(1.72, DESK_TOP_Y, 0.3);
   journalG.rotation.y = -0.35; // face the chair
@@ -845,7 +840,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   });
   makeInteractive(journalG, {
     id: "journal",
-    label: l("📖 My journal — Hi, I'm Zhihui!", "📖 我的手帐本——嗨，我是淽卉！"),
+    label: l("📖 My journal — Hi, I'm Jinghan!", "📖 我的手帐本——嗨，我是静涵！"),
     action: () => cb.onOpenAbout(),
   });
 
@@ -1007,8 +1002,8 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     shelfG.add(group);
     makeInteractive(group, {
       id: "bookshelf",
-      label: l("📚 My bookshelf — click for my reading list", "📚 我的书架——点击查看书单"),
-      action: () => cb.onOpenBooks(),
+      label: l("🎓 My bookshelf — see my education", "🎓 我的书架——看看我的学历"),
+      action: () => cb.onOpenEducation(),
     });
     const topY = size.y + 0.005;
     const topZ = -size.z / 2 + 0.22;
@@ -1088,22 +1083,6 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     });
   });
 
-  // ---- snowboard leaning on the right wall, away from the red wall ----
-  const snowboardG = new THREE.Group();
-  snowboardG.position.set(W / 2 - 0.28, 0, 2.1);
-  snowboardG.rotation.y = -Math.PI / 2;
-  room.add(snowboardG);
-  gltfLoader.load("/models/snowboard.glb", (gltf) => {
-    const { group } = prepSized(gltf.scene, 1.27); // → ~1.5m tall
-    group.rotation.x = -0.1; // lean against the wall
-    snowboardG.add(group);
-  });
-  makeInteractive(snowboardG, {
-    id: "snowboard",
-    label: l("🏂 My snowboard — winter is coming", "🏂 我的滑雪板——冬天就要来了"),
-    action: () => gsap.to(snowboardG.rotation, { z: snowboardG.rotation.z + 0.14, duration: 0.3, yoyo: true, repeat: 1 }),
-  });
-
   // ----------------------------------------------------------
   // Photo-wall lighting & floating shelves
   // ----------------------------------------------------------
@@ -1125,11 +1104,12 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     gsap.to(stripLight, { intensity: stripOn ? 6 : 0, duration: 0.5 });
   };
 
-  // little switch beside the snowboard — click to toggle the strip
-  // (enlarged 2x, raised to the photo wall's last row, shifted right)
+  // little switch on the right wall — click to toggle the strip
+  // (enlarged 2x, raised to the photo wall's last row)
   const switchG = new THREE.Group();
-  switchG.position.set(0.65, 1.76, 0.12);
-  snowboardG.add(switchG);
+  switchG.position.set(W / 2 - 0.16, 1.76, 2.75);
+  switchG.rotation.y = -Math.PI / 2;
+  room.add(switchG);
   gltfLoader.load("/models/开关.glb", (gltf) => {
     switchG.add(prepSized(gltf.scene, 0.3).group);
   });
@@ -1230,22 +1210,6 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
       flLight.intensity = coolMode ? 15 : 9;
       deskLampLight.intensity = coolMode ? 9 : 5;
     },
-  });
-
-  const skateboardG = new THREE.Group();
-  skateboardG.position.set(-3.2, 0, 1.6); // bigger, closer to the rug center
-  skateboardG.rotation.y = 0.45;
-  room.add(skateboardG);
-  gltfLoader.load("/models/skateboard.glb", (gltf) => {
-    const { group } = prepSized(gltf.scene, 0.88); // → ~1.05m long
-    skateboardG.add(group);
-  });
-
-  // (wooden low shelf removed per request)
-  makeInteractive(skateboardG, {
-    id: "skateboard",
-    label: l("🛹 Kickflip!", "🛹 滑板——来个尖翻！"),
-    action: () => gsap.to(skateboardG.rotation, { y: skateboardG.rotation.y + Math.PI * 2, duration: 0.9, ease: "power2.out" }),
   });
 
   // ----------------------------------------------------------

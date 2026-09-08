@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import OfficeScene from "../components/OfficeScene";
 import {
-  AboutOverlay, AwardsOverlay, BooksOverlay, BrowseBar, ContactCard, InternshipPlayer, NoteOverlay, ResumeOverlay, SkillOverlay,
+  AboutOverlay, AwardsOverlay, BrowseBar, ContactCard, EducationOverlay, InternshipPlayer, NoteOverlay, ResumeOverlay, SkillOverlay,
 } from "../components/Panels";
 import type { OfficeHandles, ScreenRect, ViewMode } from "../three/office";
 import { INTERNSHIPS, PHOTOS, PUBLISHED } from "../data";
@@ -18,7 +18,7 @@ export default function Home() {
   const [noteOpen, setNoteOpen] = useState(false);
   const [aboutOpen, setAboutOpen] = useState(false);
   const [awardsOpen, setAwardsOpen] = useState(false);
-  const [booksOpen, setBooksOpen] = useState(false);
+  const [eduOpen, setEduOpen] = useState(false);
   const [resumeOpen, setResumeOpen] = useState(false);
   const [posterIdx, setPosterIdx] = useState(0);
   const [photoIdx, setPhotoIdx] = useState(0);
@@ -78,7 +78,7 @@ export default function Home() {
     el.style.height = `${rect.height}px`;
   }, []);
 
-  const inOverlay = skillBranch !== null || noteOpen || aboutOpen || awardsOpen || booksOpen || resumeOpen;
+  const inOverlay = skillBranch !== null || noteOpen || aboutOpen || awardsOpen || eduOpen || resumeOpen;
   const showBack = mode !== "home" && !inOverlay;
 
   return (
@@ -97,7 +97,7 @@ export default function Home() {
           onOpenNote: () => setNoteOpen(true),
           onOpenAbout: () => setAboutOpen(true),
           onOpenAwards: () => setAwardsOpen(true),
-          onOpenBooks: () => setBooksOpen(true),
+          onOpenEducation: () => setEduOpen(true),
           onMusicToggle: setMusic,
         }}
       />
@@ -185,7 +185,7 @@ export default function Home() {
       {noteOpen && <NoteOverlay lang={lang} onClose={() => setNoteOpen(false)} />}
       {aboutOpen && <AboutOverlay lang={lang} onClose={() => setAboutOpen(false)} />}
       {awardsOpen && <AwardsOverlay lang={lang} onClose={() => setAwardsOpen(false)} />}
-      {booksOpen && <BooksOverlay lang={lang} onClose={() => setBooksOpen(false)} />}
+      {eduOpen && <EducationOverlay lang={lang} onClose={() => setEduOpen(false)} />}
       {resumeOpen && <ResumeOverlay lang={lang} onClose={() => setResumeOpen(false)} />}
     </div>
   );

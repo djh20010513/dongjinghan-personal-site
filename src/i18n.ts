@@ -39,6 +39,9 @@ export const STR = {
   storyHint: l("‹ › to browse the wall", "‹ › 翻页浏览整面照片墙"),
   // skills overlay
   skillTitle: l("My Skills", "能力标签"),
+  // education overlay
+  eduTitle: l("My Education", "我的学历"),
+  eduSubtitle: l("Two chapters, both in Shanghai — click the bookshelf anytime", "两段求学时光，都在上海——随时点击书架查看"),
   // resume overlay
   resumeTitle: l("My Résumé", "我的简历"),
   resumeDownload: l("⬇ Download PDF", "⬇ 下载 PDF"),
