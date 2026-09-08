@@ -8,7 +8,6 @@ import {
   roundRugTexture,
   stickyTexture,
   screenTexture,
-  doiBadgeTexture,
   corkTexture,
   tagNoteTexture,
   stripTexture,
@@ -19,7 +18,7 @@ import { l, t, type L, type Lang } from "../i18n";
 // ============================================================
 // Types
 // ============================================================
-export type ViewMode = "home" | "map" | "photo" | "screen" | "poster" | "desk" | "phone" | "bigpaper" | "deskframe";
+export type ViewMode = "home" | "map" | "photo" | "screen" | "poster" | "desk" | "phone" | "deskframe";
 
 export interface ScreenRect {
   left: number; top: number; width: number; height: number;
@@ -289,8 +288,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
 
   // ----------------------------------------------------------
   // Blackboard wall (back wall, WIDENED):
-  // covers left · enlarged paper view center · poster + bulbs right
-  // keyword stickies pinned on the board's right side
+  // one single big poster screen (paper first-page) + bulbs, centered
   // ----------------------------------------------------------
   const board = new THREE.Group();
   board.position.set(-0.35, 2.72, -D / 2 + 0.05);
@@ -304,16 +302,16 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   boardFace.position.set(0.25, 0, 0.025);
   board.add(boardFace);
 
-  // ---- poster display (right region) with a string of warm bulbs ----
-  const POSTER_LOCAL_X = 2.15;
+  // ---- single poster display (centered) with a string of warm bulbs ----
+  const POSTER_LOCAL_X = 0.25;
   const posterG = new THREE.Group();
   posterG.position.set(POSTER_LOCAL_X, 0, 0.05);
   board.add(posterG);
 
   let posterIdx = 0;
-  // research1 is 1400×990, research2-6 are 1400×788 — keep each poster's own aspect
-  const POSTER_H = 2.19;
-  const posterAspect = (src: string) => (src.includes("research1") ? 1400 / 990 : 1400 / 788);
+  // paper covers are portrait first-page screenshots — keep each cover's own aspect
+  const POSTER_H = 2.28;
+  const posterAspect = (i: number) => COVER_ASPECTS[i] || 0.75;
   const posterMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
   texLoader.load(PUBLISHED[0].poster!, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
@@ -321,7 +319,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     posterMat.needsUpdate = true;
   });
   const poster = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), posterMat);
-  poster.scale.set(POSTER_H * posterAspect(PUBLISHED[0].poster!), POSTER_H, 1);
+  poster.scale.set(POSTER_H * posterAspect(0), POSTER_H, 1);
   posterG.add(poster);
 
   function showPoster(i: number) {
@@ -331,14 +329,14 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
       posterMat.map = t;
       posterMat.needsUpdate = true;
     });
-    poster.scale.set(POSTER_H * posterAspect(PUBLISHED[i].poster!), POSTER_H, 1);
+    poster.scale.set(POSTER_H * posterAspect(i), POSTER_H, 1);
     gsap.fromTo(posterG.scale, { x: 0.96, y: 0.96, z: 1 }, { x: 1, y: 1, z: 1, duration: 0.45, ease: "back.out(2)" });
     cb.onPosterIndex(i);
   }
 
-  // bulb string around the poster — many little warm light bulbs
+  // bulb string around the poster — many little warm light bulbs (portrait frame)
   const bulbGeo = new THREE.SphereGeometry(0.032, 10, 10);
-  const BULB_W = 4.25, BULB_H = 2.5, BULB_STEP = 0.27;
+  const BULB_W = 2.2, BULB_H = 2.58, BULB_STEP = 0.27;
   const bulbPositions: [number, number][] = [];
   for (let x = -BULB_W / 2; x <= BULB_W / 2 + 0.001; x += BULB_STEP) {
     bulbPositions.push([x, BULB_H / 2], [x, -BULB_H / 2]);
@@ -360,8 +358,8 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   ledGlow.position.set(POSTER_LOCAL_X, 0, 0.65);
   board.add(ledGlow);
 
-  // poster world center ≈ (1.6, 2.72, -5.4)
-  const focusPoster = () => focusCam([1.6, 2.7, -3.05], [1.6, 2.72, -5.4], "poster");
+  // poster world center ≈ (-0.1, 2.72, -5.4)
+  const focusPoster = () => focusCam([-0.1, 2.7, -3.05], [-0.1, 2.72, -5.4], "poster");
   makeInteractive(posterG, {
     id: "poster",
     label: l("📽️ Research poster — click to zoom in", "📽️ 研究海报——点击放大"),
@@ -371,78 +369,6 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   function posterNav(dir: number) {
     showPoster((posterIdx + dir + PUBLISHED.length) % PUBLISHED.length);
   }
-
-  // ---- enlarged paper view (center-left of the board) — native PDF aspect ----
-  const bigG = new THREE.Group();
-  bigG.position.set(-1.15, 0, 0.045);
-  board.add(bigG);
-  const bigBack = box(1.82, 2.34, 0.02, std(0xffffff, 0.55), 0, 0, 0);
-  bigG.add(bigBack);
-  const bigMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-  texLoader.load(PUBLISHED[0].cover!, (t) => {
-    t.colorSpace = THREE.SRGBColorSpace;
-    bigMat.map = t;
-    bigMat.needsUpdate = true;
-  });
-  const bigView = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), bigMat);
-  bigView.scale.set(2.22 * COVER_ASPECTS[0], 2.22, 1);
-  bigView.position.z = 0.015;
-  bigG.add(bigView);
-
-  function showBigPaper(i: number) {
-    texLoader.load(PUBLISHED[i].cover!, (t) => {
-      t.colorSpace = THREE.SRGBColorSpace;
-      bigMat.map = t;
-      bigMat.needsUpdate = true;
-    });
-    bigView.scale.set(2.22 * (COVER_ASPECTS[i] || 0.72), 2.22, 1);
-    gsap.fromTo(bigG.scale, { x: 0.94, y: 0.94, z: 1 }, { x: 1, y: 1, z: 1, duration: 0.4, ease: "back.out(2)" });
-  }
-
-  // the enlarged view itself can be zoomed into
-  makeInteractive(bigG, {
-    id: "bigpaper",
-    label: l("🔍 Enlarged paper — click to zoom in", "🔍 论文放大图——点击再放大"),
-    action: () => focusCam([-1.7, 2.72, -3.75], [-1.7, 2.72, -5.42], "bigpaper"),
-  });
-
-  // ---- 6 published paper covers (left region) + DOI stickers ----
-  const doiTex = doiBadgeTexture();
-  const coverCols = [-4.75, -3.72, -2.69];
-  const coverRows = [0.66, -0.66];
-  PUBLISHED.forEach((p, i) => {
-    const col = coverCols[i % 3];
-    const row = coverRows[Math.floor(i / 3)];
-    const g = new THREE.Group();
-    g.position.set(col, row, 0.04);
-    board.add(g);
-    const cw = 1.06 * (COVER_ASPECTS[i] || 0.72); // each cover keeps its PDF aspect
-    g.add(box(cw + 0.08, 1.14, 0.02, std(0xffffff, 0.6), 0, 0, 0));
-    const t = texLoader.load(p.cover!);
-    t.colorSpace = THREE.SRGBColorSpace;
-    const cover = new THREE.Mesh(new THREE.PlaneGeometry(cw, 1.06), new THREE.MeshBasicMaterial({ map: t }));
-    cover.position.z = 0.015;
-    g.add(cover);
-    makeInteractive(g, {
-      id: `paper-${i}`,
-      label: l(`📄 ${p.venue} — enlarge it & load the poster`, `📄 ${p.venue}——放大并切换海报`),
-      action: () => { showBigPaper(i); showPoster(i); },
-    });
-    // DOI sticker at the cover's bottom-right corner
-    const doi = new THREE.Group();
-    doi.position.set(cw / 2 + 0.01, -0.52, 0.03);
-    const badge = new THREE.Mesh(
-      new THREE.CircleGeometry(0.115, 24),
-      new THREE.MeshBasicMaterial({ map: doiTex, transparent: true })
-    );
-    doi.add(badge);
-    g.add(doi);
-    makeInteractive(doi, {
-      id: `doi-${i}`,
-      label: l("🔗 DOI — open the paper online", "🔗 DOI——在线打开论文"),
-      action: () => { if (p.doi) window.open(p.doi, "_blank", "noopener"); },
-    });
-  });
 
   // blank guest note stays on the wall below the board, layered over an envelope sticker
   const envelopeTex = texLoader.load("/stickers/留言板信封.png");

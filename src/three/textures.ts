@@ -374,98 +374,109 @@ export function tagNoteTexture(
   });
 }
 
-/** Graduation certificate for the education frames */
+/** Education memory card for the education frames (campus card style — NOT a graduation certificate, master's still in progress) */
 export function certificateTexture(edu: {
   flag: string; school: string; schoolZh: string; degree: string; degreeZh: string;
   year: string; place: string; placeZh: string;
 }): THREE.CanvasTexture {
   return canvasTex(768, 1056, (ctx, w, h) => {
+    const inProgress = edu.year.trim().endsWith("—");
     /** shrink font until the text fits maxW */
-    const fitText = (text: string, y: number, basePx: number, font: (px: number) => string, maxW: number, minPx = 20) => {
+    const fitText = (text: string, y: number, basePx: number, font: (px: number) => string, maxW: number, minPx = 20, cx = w / 2) => {
       let px = basePx;
       ctx.font = font(px);
       while (px > minPx && ctx.measureText(text).width > maxW) {
         px -= 2;
         ctx.font = font(px);
       }
-      ctx.fillText(text, w / 2, y);
+      ctx.fillText(text, cx, y);
     };
-    // cream paper
-    ctx.fillStyle = "#fbf6e9";
+    // soft paper background
+    ctx.fillStyle = "#f7f4ee";
     ctx.fillRect(0, 0, w, h);
-    // double gold border
-    ctx.strokeStyle = "#b98a2f";
+    // top school-color band (campus card look)
+    const band = inProgress ? "#1f4e79" : "#2e6e5e";
+    ctx.fillStyle = band;
+    ctx.fillRect(0, 0, w, 190);
+    // subtle diagonal watermark lines on the band
+    ctx.strokeStyle = "rgba(255,255,255,0.08)";
     ctx.lineWidth = 10;
-    ctx.strokeRect(26, 26, w - 52, h - 52);
-    ctx.lineWidth = 3;
-    ctx.strokeRect(46, 46, w - 92, h - 92);
-    // header
-    ctx.fillStyle = "#7a1f1f";
-    ctx.font = "bold 64px Georgia, 'Songti SC', serif";
+    for (let x = -h; x < w; x += 46) {
+      ctx.beginPath(); ctx.moveTo(x, 190); ctx.lineTo(x + 190, 0); ctx.stroke();
+    }
+    // header on the band
+    ctx.fillStyle = "#ffffff";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
-    ctx.fillText("毕业证书", w / 2, 130);
-    ctx.fillStyle = "#8a6d2f";
-    ctx.font = "30px Georgia, serif";
-    ctx.fillText("CERTIFICATE OF GRADUATION", w / 2, 185);
-    // divider
-    ctx.strokeStyle = "#b98a2f";
-    ctx.lineWidth = 2;
-    ctx.beginPath(); ctx.moveTo(120, 225); ctx.lineTo(w - 120, 225); ctx.stroke();
-    // flag + school
-    ctx.font = "90px serif";
-    ctx.fillText(edu.flag, w / 2, 310);
+    ctx.font = "bold 58px 'PingFang SC', 'Songti SC', sans-serif";
+    ctx.fillText("教育经历", w / 2, 82);
+    ctx.fillStyle = "rgba(255,255,255,0.75)";
+    ctx.font = "26px Georgia, serif";
+    ctx.fillText("E D U C A T I O N   J O U R N E Y", w / 2, 140);
+    // flag badge (white circle floating over the band edge)
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath(); ctx.arc(w / 2, 190, 72, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = band;
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(w / 2, 190, 72, 0, Math.PI * 2); ctx.stroke();
+    ctx.font = "76px serif";
+    ctx.fillText(edu.flag, w / 2, 196);
+    // school names
     ctx.fillStyle = "#1f2a44";
-    fitText(edu.schoolZh, 415, 52, (px) => `bold ${px}px 'PingFang SC', 'Songti SC', sans-serif`, w - 150);
-    ctx.fillStyle = "#4a4a5a";
-    fitText(edu.school, 465, 30, (px) => `italic ${px}px Georgia, serif`, w - 150);
+    fitText(edu.schoolZh, 330, 50, (px) => `bold ${px}px 'PingFang SC', 'Songti SC', sans-serif`, w - 130);
+    ctx.fillStyle = "#5a5a6a";
+    fitText(edu.school, 385, 28, (px) => `italic ${px}px Georgia, serif`, w - 130);
+    // divider dots
+    ctx.fillStyle = band;
+    [-46, 0, 46].forEach((dx) => {
+      ctx.beginPath(); ctx.arc(w / 2 + dx, 435, 5, 0, Math.PI * 2); ctx.fill();
+    });
     // degree (auto-wrap to two lines when too long)
     ctx.fillStyle = "#2b2b3a";
     const degFont = (px: number) => `${px}px 'PingFang SC', sans-serif`;
-    ctx.font = degFont(34);
-    if (ctx.measureText(edu.degreeZh).width <= w - 170) {
-      fitText(edu.degreeZh, 560, 34, degFont, w - 170);
+    ctx.font = degFont(33);
+    if (ctx.measureText(edu.degreeZh).width <= w - 160) {
+      fitText(edu.degreeZh, 500, 33, degFont, w - 160);
     } else {
-      // split at the middle separator for a balanced two-line layout
       const parts = edu.degreeZh.split("·").map((s) => s.trim()).filter(Boolean);
       const mid = Math.ceil(parts.length / 2);
-      const line1 = parts.slice(0, mid).join(" · ");
-      const line2 = parts.slice(mid).join(" · ");
-      fitText(line1, 540, 32, degFont, w - 170);
-      fitText(line2, 588, 32, degFont, w - 170);
+      fitText(parts.slice(0, mid).join(" · "), 482, 31, degFont, w - 160);
+      fitText(parts.slice(mid).join(" · "), 528, 31, degFont, w - 160);
     }
-    // year + place
-    ctx.fillStyle = "#7a1f1f";
-    ctx.font = "bold 40px Georgia, serif";
-    ctx.fillText(edu.year, w / 2, 650);
+    ctx.fillStyle = "#6a6a7a";
+    fitText(edu.degree, 585, 24, (px) => `italic ${px}px Georgia, serif`, w - 160);
+    // year
+    ctx.fillStyle = band;
+    ctx.font = "bold 42px Georgia, serif";
+    ctx.fillText(edu.year, w / 2, 670);
+    // status pill: 在读 (green) / 已毕业 (gold)
+    const statusText = inProgress ? "在读" : "已毕业";
+    const statusColor = inProgress ? "#0ca678" : "#b98a2f";
+    ctx.font = "bold 30px 'PingFang SC', sans-serif";
+    const stW = ctx.measureText(statusText).width + 52;
+    ctx.fillStyle = statusColor;
+    ctx.beginPath();
+    ctx.roundRect(w / 2 - stW / 2, 706, stW, 52, 26);
+    ctx.fill();
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(statusText, w / 2, 733);
+    // place
     ctx.fillStyle = "#4a4a5a";
     ctx.font = "30px 'PingFang SC', sans-serif";
-    ctx.fillText(edu.placeZh, w / 2, 705);
-    // seal
-    ctx.save();
-    ctx.translate(w - 170, h - 180);
-    ctx.strokeStyle = "rgba(196, 30, 58, 0.85)";
-    ctx.lineWidth = 6;
-    ctx.beginPath(); ctx.arc(0, 0, 78, 0, Math.PI * 2); ctx.stroke();
-    ctx.fillStyle = "rgba(196, 30, 58, 0.85)";
-    ctx.font = "bold 34px 'PingFang SC', sans-serif";
-    ctx.fillText("荣誉", 0, -18);
-    ctx.fillText("典藏", 0, 22);
-    // star
-    ctx.font = "30px serif";
-    ctx.fillText("★", 0, -52);
-    ctx.restore();
-    // signature squiggle
-    ctx.strokeStyle = "#3a3a4a";
-    ctx.lineWidth = 3;
-    ctx.beginPath();
-    ctx.moveTo(120, h - 160);
-    ctx.bezierCurveTo(180, h - 210, 240, h - 130, 310, h - 180);
-    ctx.stroke();
-    ctx.font = "italic 26px Georgia, serif";
-    ctx.fillStyle = "#4a4a5a";
-    ctx.textAlign = "left";
-    ctx.fillText("Jinghan Dong", 120, h - 120);
+    ctx.fillText(`📍 ${edu.placeZh}`, w / 2, 812);
+    // bottom campus strip: simple skyline + motto instead of seal/signature
+    ctx.fillStyle = band;
+    ctx.fillRect(0, h - 120, w, 120);
+    ctx.fillStyle = "rgba(255,255,255,0.16)";
+    // skyline bars
+    const bars = [46, 70, 58, 88, 40, 66, 52, 78, 44, 62, 84, 50, 72, 42, 68, 56, 80, 48, 64];
+    const bw = w / bars.length;
+    bars.forEach((bh, i) => {
+      ctx.fillRect(i * bw + 4, h - 14 - bh, bw - 8, bh);
+    });
+    ctx.fillStyle = "rgba(255,255,255,0.9)";
+    ctx.font = "24px 'PingFang SC', sans-serif";
+    ctx.fillText(inProgress ? "求学路上 · 未完待续" : "青春纪念 · 校园时光", w / 2, h - 96);
   });
 }
 

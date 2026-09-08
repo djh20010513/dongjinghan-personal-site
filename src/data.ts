@@ -332,6 +332,15 @@ export const PAPERS: Paper[] = [
     cover: "/papers/paper4.jpg",
     poster: "/papers/paper4.jpg",
   },
+  {
+    title:
+      "Multi-Step Ahead Dissolved Oxygen Concentration Prediction Based on Knowledge Guided Ensemble Learning and Explainable Artificial Intelligence",
+    venue: "Journal of Hydrology, 636:131297 (2024)",
+    tag: "Water Quality",
+    doi: "https://doi.org/10.1016/j.jhydrol.2024.131297",
+    cover: "/papers/paper5.jpg",
+    poster: "/papers/paper5.jpg",
+  },
 ];
 
 export const POSTERS = [
@@ -339,6 +348,7 @@ export const POSTERS = [
   "/papers/paper2.jpg",
   "/papers/paper3.jpg",
   "/papers/paper4.jpg",
+  "/papers/paper5.jpg",
 ];
 
 /** Published papers shown on the blackboard (under-review work stays hidden) */
@@ -379,8 +389,8 @@ export const PHOTO_ASPECTS = [
   1.333, 0.741, 0.75,
 ];
 
-/** width/height aspect of each paper first-page cover (from the source PDFs) */
-export const COVER_ASPECTS = [0.659, 0.779, 0.75, 0.763];
+/** width/height aspect of each paper first-page cover (from the user's screenshots) */
+export const COVER_ASPECTS = [0.659, 0.778, 0.752, 0.761, 0.749];
 
 // ---------- 联系方式 ----------
 export const CONTACT = {
