@@ -264,14 +264,14 @@ export const SKILL_WALL: SkillWallModule[] = [
 // ---------- 左墙：Vibe Coding 作品展示 ----------
 export const VIBE_WORK = {
   title: l("My Vibe Coding Work", "我的 Vibe Coding 作品"),
-  name: l("This 3D Office — dongjinghan.cn", "3D 个人办公室 · dongjinghan.cn"),
+  name: l("Job Hunter Pro · 职途 AI", "职途 AI · 智能求职助手"),
   desc: l(
-    "Designed & built end-to-end with AI coding tools — Three.js scene, React UI and all content iterated in conversation.",
-    "用 AI 编程工具从 0 到 1 搭建——Three.js 场景、React 界面与全部内容都在对话中迭代完成。"
+    "An all-in-one job-hunting workspace built with AI coding tools — aggregating openings, tracking applications, JD matching and resume polishing.",
+    "用 AI 编程工具打造的一站式求职工作台——聚合职位、追踪投递、JD 匹配与简历优化。"
   ),
-  tools: ["WorkBuddy", "Claude Code", "Three.js", "React"],
+  tools: ["WorkBuddy", "Claude Code", "JavaScript", "Vercel"],
   cover: "/work/vibe1.jpg",
-  link: "https://github.com/djh20010513/dongjinghan-personal-site",
+  link: "https://job-hunter-pro-1.vercel.app/",
 };
 
 // ---------- 论文（黑板 + 投影仪） ----------
