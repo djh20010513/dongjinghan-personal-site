@@ -296,9 +296,9 @@ export function AboutOverlay({ lang, onClose }: { lang: Lang; onClose: () => voi
             </h2>
             <p className="about-intro">
               {lang === "en" ? (
-                <>AI Product Manager — interned at <b className="hl">ByteDance</b>, <b className="hl">Xiaohongshu</b> and <b className="hl">Bilibili</b>, building Agent / AIGC products. Also an M.Eng. student at ECNU working on AI + water research. I turn business pain points into products that ship.</>
+                <>AI Product Manager focused on <b className="hl">LLM applications</b> and intelligent products. With a solid grasp of AI technology and a track record of shipping products, I'm familiar with <b className="hl">Agent</b>, <b className="hl">RAG</b> and other LLM application techniques, and I've contributed to AI product development at <b className="hl">ByteDance</b>, <b className="hl">Xiaohongshu</b> and <b className="hl">Bilibili</b> — turning AI capabilities into real business value.</>
               ) : (
-                <>AI 产品经理——在<b className="hl">字节跳动</b>、<b className="hl">小红书</b>、<b className="hl">哔哩哔哩</b>实习，做 Agent / AIGC 产品；也是华东师范大学硕士生，研究 AI + 水利。我把业务痛点做成真正落地的产品。</>
+                <>AI 产品经理，专注<b className="hl">大模型应用</b>与智能产品。具备 AI 技术理解与产品落地能力，熟悉 <b className="hl">Agent</b>、<b className="hl">RAG</b> 等大模型应用技术，参与<b className="hl">字节跳动</b>、<b className="hl">小红书</b>、<b className="hl">哔哩哔哩</b> AI 产品建设，致力于将 AI 能力转化为真实业务价值。</>
               )}
             </p>
             <div className="about-stickers-row">

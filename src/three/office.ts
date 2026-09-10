@@ -8,6 +8,7 @@ import {
   roundRugTexture,
   stickyTexture,
   screenTexture,
+  doiBadgeTexture,
   corkTexture,
   tagNoteTexture,
   stripTexture,
@@ -288,7 +289,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
 
   // ----------------------------------------------------------
   // Blackboard wall (back wall, WIDENED):
-  // one single big poster screen (paper first-page) + bulbs, centered
+  // 5 paper covers tiled on the left · big poster screen + bulbs on the right
   // ----------------------------------------------------------
   const board = new THREE.Group();
   board.position.set(-0.35, 2.72, -D / 2 + 0.05);
@@ -303,7 +304,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   board.add(boardFace);
 
   // ---- single poster display (centered) with a string of warm bulbs ----
-  const POSTER_LOCAL_X = 0.25;
+  const POSTER_LOCAL_X = 3.0;
   const posterG = new THREE.Group();
   posterG.position.set(POSTER_LOCAL_X, 0, 0.05);
   board.add(posterG);
@@ -358,8 +359,8 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   ledGlow.position.set(POSTER_LOCAL_X, 0, 0.65);
   board.add(ledGlow);
 
-  // poster world center ≈ (-0.1, 2.72, -5.4)
-  const focusPoster = () => focusCam([-0.1, 2.7, -3.05], [-0.1, 2.72, -5.4], "poster");
+  // poster world center ≈ (2.65, 2.72, -5.4)
+  const focusPoster = () => focusCam([2.65, 2.7, -3.05], [2.65, 2.72, -5.4], "poster");
   makeInteractive(posterG, {
     id: "poster",
     label: l("📽️ Research poster — click to zoom in", "📽️ 研究海报——点击放大"),
@@ -369,6 +370,45 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   function posterNav(dir: number) {
     showPoster((posterIdx + dir + PUBLISHED.length) % PUBLISHED.length);
   }
+
+  // ---- 5 published paper covers (left region, tiled 3 + 2) + DOI stickers ----
+  const doiTex = doiBadgeTexture();
+  const coverSpots: [number, number][] = [
+    [-4.6, 0.66], [-3.35, 0.66], [-2.1, 0.66],
+    [-3.97, -0.66], [-2.72, -0.66],
+  ];
+  PUBLISHED.forEach((p, i) => {
+    const [col, row] = coverSpots[i];
+    const g = new THREE.Group();
+    g.position.set(col, row, 0.04);
+    board.add(g);
+    const cw = 1.06 * (COVER_ASPECTS[i] || 0.72); // each cover keeps its PDF aspect
+    g.add(box(cw + 0.08, 1.14, 0.02, std(0xffffff, 0.6), 0, 0, 0));
+    const t = texLoader.load(p.cover!);
+    t.colorSpace = THREE.SRGBColorSpace;
+    const cover = new THREE.Mesh(new THREE.PlaneGeometry(cw, 1.06), new THREE.MeshBasicMaterial({ map: t }));
+    cover.position.z = 0.015;
+    g.add(cover);
+    makeInteractive(g, {
+      id: `paper-${i}`,
+      label: l(`📄 ${p.venue} — show it on the big screen`, `📄 ${p.venue}——投到大屏幕查看`),
+      action: () => showPoster(i),
+    });
+    // DOI sticker at the cover's bottom-right corner
+    const doi = new THREE.Group();
+    doi.position.set(cw / 2 + 0.01, -0.52, 0.03);
+    const badge = new THREE.Mesh(
+      new THREE.CircleGeometry(0.115, 24),
+      new THREE.MeshBasicMaterial({ map: doiTex, transparent: true })
+    );
+    doi.add(badge);
+    g.add(doi);
+    makeInteractive(doi, {
+      id: `doi-${i}`,
+      label: l("🔗 DOI — open the paper online", "🔗 DOI——在线打开论文"),
+      action: () => { if (p.doi) window.open(p.doi, "_blank", "noopener"); },
+    });
+  });
 
   // blank guest note stays on the wall below the board, layered over an envelope sticker
   const envelopeTex = texLoader.load("/stickers/留言板信封.png");

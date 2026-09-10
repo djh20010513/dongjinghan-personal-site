@@ -390,7 +390,7 @@ export const PHOTO_ASPECTS = [
 ];
 
 /** width/height aspect of each paper first-page cover (from the user's screenshots) */
-export const COVER_ASPECTS = [0.659, 0.778, 0.752, 0.761, 0.749];
+export const COVER_ASPECTS = [0.66, 0.779, 0.75, 0.762, 0.75];
 
 // ---------- 联系方式 ----------
 export const CONTACT = {

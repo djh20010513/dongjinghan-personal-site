@@ -11,7 +11,7 @@ import "../App.css";
 
 export default function Home() {
   const [ready, setReady] = useState(false);
-  const [lang, setLangState] = useState<Lang>("en");
+  const [lang, setLangState] = useState<Lang>("zh");
   const [hoverLabel, setHoverLabel] = useState<L | null>(null);
   const [mode, setMode] = useState<ViewMode>("home");
   const [skillBranch, setSkillBranch] = useState<string | null>(null);

@@ -54,8 +54,8 @@ export const STR = {
 export const ABOUT = {
   title: l("Hi! I'm Jinghan", "嗨！我是静涵"),
   intro: l(
-    "AI Product Manager — interned at ByteDance, Xiaohongshu and Bilibili, building Agent / AIGC products. Also an M.Eng. student at ECNU working on AI + water research. I turn business pain points into products that ship.",
-    "AI 产品经理——在字节跳动、小红书、哔哩哔哩实习，做 Agent / AIGC 产品；也是华东师范大学硕士生，研究 AI + 水利。我把业务痛点做成真正落地的产品。"
+    "AI Product Manager focused on LLM applications and intelligent products. With a solid grasp of AI technology and a track record of shipping products, I'm familiar with Agent, RAG and other LLM application techniques, and I've contributed to AI product development at ByteDance, Xiaohongshu and Bilibili — turning AI capabilities into real business value.",
+    "AI 产品经理，专注大模型应用与智能产品。具备 AI 技术理解与产品落地能力，熟悉 Agent、RAG 等大模型应用技术，参与字节跳动、小红书、哔哩哔哩 AI 产品建设，致力于将 AI 能力转化为真实业务价值。"
   ),
   factsTitle: l("Quick Facts · 小档案", "Quick Facts · 小档案"),
   facts: [
