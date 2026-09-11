@@ -454,7 +454,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   // ----------------------------------------------------------
   // Left wall: corkboard — skill-tag modules + vibe-coding work
   // ----------------------------------------------------------
-  let currentLang: Lang = "en";
+  let currentLang: Lang = "zh"; // must match Home.tsx's default — the wall starts in Chinese
 
   const wallG = new THREE.Group();
   wallG.position.set(-W / 2 + 0.03, 2.55, -0.6);

@@ -49,6 +49,13 @@ export default function Home() {
     return () => window.clearTimeout(t);
   }, [ready]);
 
+  // once the scene is up, sync its canvas labels with the React-side language
+  // (the 3D wall generates its textures before any toggle happens)
+  useEffect(() => {
+    if (ready) handlesRef.current?.setLang(lang);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+
   const setMusic = useCallback((playing: boolean) => {
     handlesRef.current?.setMusic(playing);
     if (playing) void bgmRef.current?.play().catch(() => {});
