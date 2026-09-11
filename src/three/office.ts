@@ -489,17 +489,14 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   titleStrip.position.set(0, WALL_H / 2 + 0.18, 0.02);
   wallG.add(titleStrip);
 
-  // pulsing rings pinned onto the wall (driven by the tick loop)
-  const pins: THREE.Mesh[] = [];
-
   // ---- left column: vibe-coding work (polaroid pinned on the cork) ----
   const vibeG = new THREE.Group();
-  vibeG.position.set(-1.82, 0.08, 0.03);
-  vibeG.rotation.z = -0.035;
+  vibeG.position.set(-2.0, 0.05, 0.02); // hug the cork — big z made it look like it floats
+  vibeG.rotation.z = -0.03;
   wallG.add(vibeG);
   // white polaroid paper
   const vibePaper = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.24, 1.62),
+    new THREE.PlaneGeometry(0.98, 1.28),
     new THREE.MeshStandardMaterial({ color: 0xfffef8, roughness: 0.9 })
   );
   vibePaper.castShadow = true;
@@ -508,26 +505,33 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   const vibeCoverTex = texLoader.load(VIBE_WORK.cover);
   vibeCoverTex.colorSpace = THREE.SRGBColorSpace;
   const vibeCover = new THREE.Mesh(
-    new THREE.PlaneGeometry(1.06, 0.8),
+    new THREE.PlaneGeometry(0.84, 0.64),
     new THREE.MeshBasicMaterial({ map: vibeCoverTex })
   );
-  vibeCover.position.set(0, 0.33, 0.012);
+  vibeCover.position.set(0, 0.26, 0.012);
   vibeG.add(vibeCover);
   // caption strip under the photo
   const vibeCapMat = new THREE.MeshBasicMaterial({
-    map: tagNoteTexture(t(VIBE_WORK.name, currentLang), "#fffef8", { fontPx: 30 }),
+    map: tagNoteTexture(t(VIBE_WORK.name, currentLang), "#fffef8", { fontPx: 26 }),
     transparent: true,
   });
-  regLang(vibeCapMat, (lang) => tagNoteTexture(t(VIBE_WORK.name, lang), "#fffef8", { fontPx: 30 }));
-  const vibeCap = new THREE.Mesh(new THREE.PlaneGeometry(1.08, 0.42), vibeCapMat);
-  vibeCap.position.set(0, -0.44, 0.012);
+  regLang(vibeCapMat, (lang) => tagNoteTexture(t(VIBE_WORK.name, lang), "#fffef8", { fontPx: 26 }));
+  const vibeCap = new THREE.Mesh(new THREE.PlaneGeometry(0.86, 0.33), vibeCapMat);
+  vibeCap.position.set(0, -0.35, 0.012);
   vibeG.add(vibeCap);
+  // pushpin holding the polaroid onto the cork
+  const vibePin = new THREE.Mesh(
+    new THREE.SphereGeometry(0.035, 12, 12),
+    new THREE.MeshStandardMaterial({ color: 0xd92332, roughness: 0.35 })
+  );
+  vibePin.position.set(0, 0.62, 0.02);
+  vibeG.add(vibePin);
   // washi tape on top of the polaroid
   const tape = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.5, 0.16),
+    new THREE.PlaneGeometry(0.4, 0.13),
     new THREE.MeshBasicMaterial({ color: 0x9df2ff, transparent: true, opacity: 0.75 })
   );
-  tape.position.set(0, 0.86, 0.014);
+  tape.position.set(0, 0.68, 0.014);
   tape.rotation.z = 0.04;
   vibeG.add(tape);
   makeInteractive(vibeG, {
@@ -564,25 +568,18 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     titleNote.position.set(0, 0.92, 0.012);
     titleNote.rotation.z = mi % 2 === 0 ? 0.03 : -0.03;
     g.add(titleNote);
-    // tag stickies — 2 cols × 3 rows
+    // tag stickies — 2 cols; modules with 8 tags use a tighter pitch so they stay on the sheet
+    const tagStep = mod.tags.length > 6 ? 0.46 : 0.52;
+    const tagTop = mod.tags.length > 6 ? 0.4 : 0.42;
     mod.tags.forEach((tag, ti) => {
       const tagMesh = new THREE.Mesh(
         new THREE.PlaneGeometry(0.48, 0.32),
         new THREE.MeshBasicMaterial({ map: tagNoteTexture(tag.text, tag.color, { fontPx: 30 }), transparent: true })
       );
-      tagMesh.position.set(ti % 2 === 0 ? -0.27 : 0.27, 0.42 - Math.floor(ti / 2) * 0.52, 0.012);
+      tagMesh.position.set(ti % 2 === 0 ? -0.27 : 0.27, tagTop - Math.floor(ti / 2) * tagStep, 0.012);
       tagMesh.rotation.z = TAG_TILT[ti % TAG_TILT.length];
       g.add(tagMesh);
     });
-    // pulse ring hint on the module
-    const ring = new THREE.Mesh(
-      new THREE.RingGeometry(0.07, 0.095, 24),
-      new THREE.MeshBasicMaterial({ color: 0xc41e3a, transparent: true, opacity: 0.8, side: THREE.DoubleSide })
-    );
-    ring.userData.phase = mi * 1.3;
-    ring.position.set(0.48, 1.12, 0.014);
-    g.add(ring);
-    pins.push(ring);
     makeInteractive(g, {
       id: `skill-${mod.id}`,
       label: l(`🏷️ ${t(mod.title, "en")} — see details`, `🏷️ ${t(mod.title, "zh")}——查看详情`),
@@ -1277,6 +1274,24 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   }
   canvas.addEventListener("dblclick", onDblClick);
 
+  // wheel = dolly in/out while zoomed into the blackboard or the cork wall
+  // (OrbitControls is disabled in focus modes, so without this the wheel feels dead)
+  function onWheel(ev: WheelEvent) {
+    if (mode !== "map" && mode !== "poster") return;
+    const el = ev.target as HTMLElement | null;
+    if (!el || typeof el.closest !== "function") return;
+    // the paper reader scrolls its own pages — only zoom when the pointer is outside it
+    if (el.closest(".pr-panel")) return;
+    // a skill sheet open over the cork wall owns the wheel too
+    if (mode === "map" && el.closest(".sheet-backdrop")) return;
+    const dir = camera.position.clone().sub(controls.target);
+    const dist = dir.length();
+    const next = THREE.MathUtils.clamp(dist * (1 + ev.deltaY * 0.0011), 0.55, 8);
+    dir.setLength(next);
+    camera.position.copy(controls.target).add(dir);
+  }
+  window.addEventListener("wheel", onWheel, { passive: true });
+
   function onResize() {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
@@ -1339,11 +1354,6 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     if (musicState.playing && vinylPivot) {
       vinylPivot.rotation.y += 2.4 * dt; // turntable spins while the music plays
     }
-    pins.forEach((ring) => {
-      const s = 1 + 0.35 * Math.sin(t * 2.4 + ring.userData.phase);
-      ring.scale.set(s, s, 1);
-      (ring.material as THREE.MeshBasicMaterial).opacity = 0.45 + 0.35 * Math.sin(t * 2.4 + ring.userData.phase);
-    });
     bulbs.forEach((b) => {
       (b.material as THREE.MeshStandardMaterial).emissiveIntensity =
         2.0 + 0.6 * Math.sin(t * 2.2 + b.userData.phase);
@@ -1364,6 +1374,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     dispose: () => {
       disposed = true;
       window.removeEventListener("resize", onResize);
+      window.removeEventListener("wheel", onWheel);
       canvas.removeEventListener("pointermove", onMove);
       canvas.removeEventListener("click", onClick);
       controls.dispose();
