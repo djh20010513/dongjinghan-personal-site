@@ -16,6 +16,7 @@ export default function OfficeScene({
     if (!canvasRef.current) return;
     const handles = createOffice(canvasRef.current, {
       onReady: () => eventsRef.current.onReady(),
+      onProgress: (p) => eventsRef.current.onProgress(p),
       onHover: (l) => eventsRef.current.onHover(l),
       onModeChange: (m) => eventsRef.current.onModeChange(m),
       onScreenRect: (r) => eventsRef.current.onScreenRect(r),

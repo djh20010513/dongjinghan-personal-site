@@ -5,7 +5,7 @@ const LOAD_TITLE = "Loading.. Jinghan's 3D Office";
 const KNOCK_AT = 1900; // ms — matches the hand-knock CSS animation delay
 const INTRO_MIN = 3600; // ms — let the whole door/knock intro play out
 
-export default function LoadingScreen({ ready }: { ready: boolean }) {
+export default function LoadingScreen({ ready, progress = 0 }: { ready: boolean; progress?: number }) {
   const [typed, setTyped] = useState("");
   const [phase, setPhase] = useState<"load" | "entering" | "out" | "gone">("load");
   const mountAt = useRef(Date.now());
@@ -68,6 +68,9 @@ export default function LoadingScreen({ ready }: { ready: boolean }) {
           </>
         )}
       </div>
+      {!entering && progress > 0 && (
+        <div className="load-progress">{Math.min(progress, 99)}%</div>
+      )}
     </div>
   );
 }

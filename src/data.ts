@@ -60,7 +60,7 @@ export const INTERNSHIPS: Internship[] = [
     num: "01",
     company: l("ByteDance · Douyin Life Service", "字节跳动 · 抖音生活服务"),
     role: l("AI Product Manager", "AI 产品经理"),
-    period: "2026.06 — Now",
+    period: "2026.06 — 2026.09",
     scene: l("TO B — Merchant AI Creative Production", "TO B — 商家 AI 创意生产"),
     headline: l(
       "AI creative videos: GMV +12% vs. merchants' own videos, VV +16%",

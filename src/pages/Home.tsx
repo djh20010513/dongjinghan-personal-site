@@ -11,6 +11,7 @@ import "../App.css";
 
 export default function Home() {
   const [ready, setReady] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [lang, setLangState] = useState<Lang>("zh");
   const [hoverLabel, setHoverLabel] = useState<L | null>(null);
   const [mode, setMode] = useState<ViewMode>("home");
@@ -34,10 +35,19 @@ export default function Home() {
 
   useEffect(() => {
     bgmRef.current = new Audio("/audio/bgm.mp3");
+    bgmRef.current.preload = "none"; // 5MB music — only fetch when the user hits play
     bgmRef.current.loop = true;
     bgmRef.current.volume = 0.3;
     return () => { bgmRef.current?.pause(); };
   }, []);
+
+  // failsafe: never trap the visitor on the loading screen forever —
+  // if a single asset stalls on a slow network, enter anyway after 45s
+  useEffect(() => {
+    if (ready) return;
+    const t = window.setTimeout(() => setReady(true), 45000);
+    return () => window.clearTimeout(t);
+  }, [ready]);
 
   const setMusic = useCallback((playing: boolean) => {
     handlesRef.current?.setMusic(playing);
@@ -88,6 +98,7 @@ export default function Home() {
         events={{
           // manager.onLoad re-fires after every lazy texture batch — set once
           onReady: () => setReady(true),
+          onProgress: setProgress,
           onHover: setHoverLabel,
           onModeChange: setMode,
           onScreenRect,
@@ -102,7 +113,7 @@ export default function Home() {
         }}
       />
 
-      <LoadingScreen ready={ready} />
+      <LoadingScreen ready={ready} progress={progress} />
 
       {/* hover tooltip */}
       {ready && hoverLabel && mode === "home" && !inOverlay && (

@@ -502,3 +502,71 @@ export function matTexture(): THREE.CanvasTexture {
     ctx.fill();
   });
 }
+
+/** Chalk doodles for the blackboard middle: title + arrow + stars (transparent bg) */
+export function chalkBoardArtTexture(): THREE.CanvasTexture {
+  return canvasTex(1000, 620, (ctx, w) => {
+    const chalk = (a = 0.92) => `rgba(245, 245, 235, ${a})`;
+    // wobbly hand-drawn stroke between two points via slight random offsets
+    const wobble = (x0: number, y0: number, x1: number, y1: number, lw = 4) => {
+      ctx.strokeStyle = chalk(0.85);
+      ctx.lineWidth = lw;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(x0, y0);
+      const mx = (x0 + x1) / 2 + (Math.random() - 0.5) * 14;
+      const my = (y0 + y1) / 2 + (Math.random() - 0.5) * 14;
+      ctx.quadraticCurveTo(mx, my, x1, y1);
+      ctx.stroke();
+    };
+    const star = (cx: number, cy: number, r: number) => {
+      for (let i = 0; i < 5; i++) {
+        const a = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+        wobble(cx, cy, cx + r * Math.cos(a), cy + r * Math.sin(a), 3);
+      }
+    };
+    // ---- title, hand-written chalk style ----
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = chalk();
+    ctx.font = "italic 900 108px 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive";
+    ctx.globalAlpha = 0.92;
+    ctx.fillText("My Research", w / 2, 150);
+    ctx.globalAlpha = 0.35; // chalk double-stroke ghosting
+    ctx.fillText("My Research", w / 2 + 3, 152);
+    ctx.globalAlpha = 1;
+    // underline squiggle
+    wobble(180, 225, 820, 218, 5);
+    wobble(180, 236, 820, 232, 3);
+    // subtitle
+    ctx.fillStyle = chalk(0.88);
+    ctx.font = "italic 700 54px 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive";
+    ctx.fillText("5 × SCI Papers", w / 2, 320);
+    // ---- big hand-drawn arrow pointing right (toward the poster screen) ----
+    const ay = 450;
+    ctx.strokeStyle = chalk(0.9);
+    ctx.lineWidth = 9;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(140, ay);
+    ctx.bezierCurveTo(380, ay - 34, 600, ay + 30, 830, ay - 6);
+    ctx.stroke();
+    // arrowhead
+    wobble(830, ay - 6, 770, ay - 44, 8);
+    wobble(830, ay - 6, 764, ay + 26, 8);
+    // arrow label
+    ctx.fillStyle = chalk(0.85);
+    ctx.font = "italic 700 40px 'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive";
+    ctx.fillText("on the big screen!", 340, ay - 62);
+    // ---- doodles: stars + dots ----
+    star(105, 105, 34);
+    star(905, 240, 26);
+    star(130, 545, 22);
+    [[880, 110], [915, 140], [850, 145], [80, 300], [110, 340], [920, 520]].forEach(([x, y]) => {
+      ctx.fillStyle = chalk(0.7);
+      ctx.beginPath();
+      ctx.arc(x, y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    });
+  });
+}

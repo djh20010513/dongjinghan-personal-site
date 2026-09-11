@@ -71,9 +71,9 @@ export const ABOUT = {
 export const AWARDS = {
   title: l("Awards & Honors", "荣誉与奖项"),
   items: [
+    l("Shanghai Outstanding Graduate · 2024", "上海市优秀毕业生 · 2024"),
     l("ECNU Academic Excellence Scholarship · 2025", "华东师范大学优秀学业奖学金 · 2025"),
     l("First-Class Postgraduate Scholarship, ECNU · 2025", "华东师范大学研究生一等奖学金 · 2025"),
-    l("Shanghai Outstanding Graduate · 2024", "上海市优秀毕业生 · 2024"),
     l("Outstanding League Cadre, Shanghai Ocean University · 2023", "上海海洋大学优秀团干部 · 2023"),
     l("Outstanding Student, Shanghai Ocean University · 2022", "上海海洋大学优秀学生 · 2022"),
   ],

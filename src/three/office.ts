@@ -9,6 +9,7 @@ import {
   stickyTexture,
   screenTexture,
   doiBadgeTexture,
+  chalkBoardArtTexture,
   corkTexture,
   tagNoteTexture,
   stripTexture,
@@ -27,6 +28,7 @@ export interface ScreenRect {
 
 export interface OfficeCallbacks {
   onReady: () => void;
+  onProgress: (pct: number) => void;
   onHover: (label: L | null) => void;
   onModeChange: (mode: ViewMode) => void;
   onScreenRect: (rect: ScreenRect | null) => void;
@@ -110,6 +112,9 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   // ----------------------------------------------------------
   const manager = new THREE.LoadingManager();
   manager.onLoad = () => cb.onReady();
+  manager.onProgress = (_url, loaded, total) => {
+    cb.onProgress(total > 0 ? Math.round((loaded / total) * 100) : 0);
+  };
   const texLoader = new THREE.TextureLoader(manager);
   const gltfLoader = new GLTFLoader(manager);
   gltfLoader.setMeshoptDecoder(MeshoptDecoder);
@@ -370,6 +375,14 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   function posterNav(dir: number) {
     showPoster((posterIdx + dir + PUBLISHED.length) % PUBLISHED.length);
   }
+
+  // ---- chalk doodles in the empty middle of the board (title + arrow + stars) ----
+  const chalkArt = new THREE.Mesh(
+    new THREE.PlaneGeometry(2.7, 1.67),
+    new THREE.MeshBasicMaterial({ map: chalkBoardArtTexture(), transparent: true })
+  );
+  chalkArt.position.set(0.15, 0, 0.03);
+  board.add(chalkArt);
 
   // ---- 5 published paper covers (left region, tiled 3 + 2) + DOI stickers ----
   const doiTex = doiBadgeTexture();
@@ -778,7 +791,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   deskG.add(deskFrameG);
   deskFrameG.add(box(0.42, 0.42, 0.025, std(0xfdfcf8, 0.5), 0, 0.21, 0));
   deskFrameG.add(box(0.03, 0.1, 0.02, std(0xd8cfc0, 0.6), 0, 0.05, -0.02)); // little stand foot
-  const deskFrameTex = texLoader.load("/photos/home.gif"); // static first frame in 3D
+  const deskFrameTex = texLoader.load("/photos/home.jpg"); // static first frame in 3D
   deskFrameTex.colorSpace = THREE.SRGBColorSpace;
   const deskFrameScreen = new THREE.Mesh(
     new THREE.PlaneGeometry(0.36, 0.36),

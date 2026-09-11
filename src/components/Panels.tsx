@@ -159,25 +159,30 @@ export function InternshipPlayer({
   return (
     <div className="isn-card" key={it.id}>
       <div className="isn-scroll">
-        <div className="isn-head">
-          <span className="isn-logo" style={{ background: accent }}>{t(it.company, lang).slice(0, 1)}</span>
-          <div className="isn-headtext">
-            <div className="isn-company">{t(it.company, lang)}</div>
-            <div className="isn-role">{t(it.role, lang)} · {it.period}</div>
+        <div className="isn-hero" style={{ background: `linear-gradient(120deg, ${accent} 0%, ${accent}b8 100%)` }}>
+          <div className="isn-hero-row">
+            <span className="isn-logo">{t(it.company, lang).slice(0, 1)}</span>
+            <div className="isn-headtext">
+              <div className="isn-company">{t(it.company, lang)}</div>
+              <div className="isn-role">{t(it.role, lang)} · {it.period}</div>
+            </div>
+            <span className="isn-num">{it.num}</span>
           </div>
-          <span className="isn-scene" style={{ borderColor: accent, color: accent }}>{t(it.scene, lang)}</span>
+          <div className="isn-scene-row">
+            <span className="isn-scene">{t(it.scene, lang)}</span>
+          </div>
+          <div className="isn-headline">{t(it.headline, lang)}</div>
         </div>
-        <div className="isn-headline" style={{ color: accent }}>{t(it.headline, lang)}</div>
         <div className="isn-bg">{t(it.background, lang)}</div>
         <div className="isn-items">
           {it.items.map((item, i) => (
-            <div className="isn-item" key={i}>
+            <div className="isn-item" key={i} style={{ borderLeftColor: accent }}>
               <div className="isn-item-title">
-                <span className="isn-item-dot" style={{ background: accent }} />
+                <span className="isn-item-badge" style={{ background: accent }}>{String(i + 1).padStart(2, "0")}</span>
                 {t(item.title, lang)}
               </div>
               <div className="isn-item-desc">{t(item.desc, lang)}</div>
-              <div className="isn-item-metric" style={{ color: accent }}>▲ {t(item.metric, lang)}</div>
+              <div className="isn-item-metric" style={{ color: accent, background: `${accent}14` }}>▲ {t(item.metric, lang)}</div>
             </div>
           ))}
         </div>
