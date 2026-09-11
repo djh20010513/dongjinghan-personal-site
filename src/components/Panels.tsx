@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CONTACT, HONORS, INTERNSHIPS, PHOTOS, POSTERS, SKILLS } from "../data";
+import { CONTACT, HONORS, INTERNSHIPS, PHOTOS, POSTERS, PUBLISHED, SKILLS } from "../data";
 import { ABOUT, AWARDS, STR, t, type Lang } from "../i18n";
 
 // ============================================================
@@ -267,6 +267,90 @@ export function BrowseBar({
 
 export const POSTER_TOTAL = POSTERS.length;
 export const PHOTO_TOTAL = PHOTOS.length;
+
+// ============================================================
+// Paper reader — zooming into the blackboard screen opens this
+// scrollable lightbox: pages stacked vertically, ‹ › switches
+// papers (the 3D poster behind switches along via posterNav)
+// ============================================================
+export function PaperReader({
+  idx, lang, onNav, onClose,
+}: {
+  idx: number;
+  lang: Lang;
+  onNav: (dir: number) => void;
+  onClose: () => void;
+}) {
+  const p = PUBLISHED[idx];
+  const pages = p.pages && p.pages.length > 0 ? p.pages : [p.poster!];
+
+  // ← / → flip papers (Esc is handled globally in Home)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") onNav(-1);
+      if (e.key === "ArrowRight") onNav(1);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onNav]);
+
+  return (
+    <div className="sheet-backdrop reading paper-reader" onClick={onClose}>
+      <button
+        className="pr-nav pr-prev"
+        aria-label="previous paper"
+        onClick={(e) => { e.stopPropagation(); onNav(-1); }}
+      >‹</button>
+
+      <div className="pr-panel" onClick={(e) => e.stopPropagation()}>
+        <header className="pr-head">
+          <div className="pr-meta">
+            <div className="pr-count">📽️ {t(STR.posterLabel, lang)} · {idx + 1} / {PUBLISHED.length}</div>
+            <h2 className="pr-title">{p.title}</h2>
+            <div className="pr-sub">
+              <span>{p.venue}</span>
+              {p.award && <span className="pr-badge">{p.award}</span>}
+            </div>
+          </div>
+          <div className="pr-actions">
+            {p.doi && (
+              <a className="pr-doi" href={p.doi} target="_blank" rel="noopener noreferrer">🔗 DOI</a>
+            )}
+            <button className="pr-close" onClick={onClose} aria-label="close">×</button>
+          </div>
+        </header>
+
+        {/* key resets the scroll position to the top whenever the paper changes */}
+        <div className="pr-scroll" key={idx}>
+          {pages.map((src, k) => (
+            <img
+              key={src}
+              src={src}
+              alt={`${p.title} — page ${k + 1}`}
+              className="pr-page"
+              loading={k === 0 ? "eager" : "lazy"}
+              draggable={false}
+            />
+          ))}
+          <div className="pr-end">
+            <span>{pages.length === 1 ? t(STR.paperEndPreview, lang) : t(STR.paperEnd, lang)}</span>
+            {p.doi && (
+              <a href={p.doi} target="_blank" rel="noopener noreferrer">{t(STR.paperReadFull, lang)}</a>
+            )}
+          </div>
+        </div>
+
+        <div className="pr-hint">{t(STR.paperScrollHint, lang)}</div>
+      </div>
+
+      <button
+        className="pr-nav pr-next"
+        aria-label="next paper"
+        onClick={(e) => { e.stopPropagation(); onNav(1); }}
+      >›</button>
+    </div>
+  );
+}
 
 // ============================================================
 // About — the journal on the desk opens this "Hi, I'm Jinghan" sheet

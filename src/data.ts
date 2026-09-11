@@ -284,6 +284,7 @@ export interface Paper {
   underReview?: boolean;
   cover?: string;  // journal cover thumbnail on the blackboard
   poster?: string; // matching research poster shown on the blackboard
+  pages?: string[]; // every page rendered as an image — the scroll reader falls back to [poster] when absent
 }
 
 export const BRANCHES = [

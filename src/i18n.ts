@@ -23,7 +23,11 @@ export const STR = {
     "🖱️ 左键旋转 · 右键平移 · 双击定位 · 点击物品探索"
   ),
   back: l("← Back", "← 返回"),
-  posterLabel: l("Paper Cover", "论文封面"),
+  posterLabel: l("Papers", "论文"),
+  paperScrollHint: l("Scroll to read · ‹ › switch papers · Esc to go back", "上下滑动阅读 · ‹ › 切换论文 · Esc 返回"),
+  paperEndPreview: l("First-page preview — open the DOI link for the full text", "当前为首页预览——点击 DOI 阅读全文"),
+  paperEnd: l("End of paper — publisher page via DOI", "全文完——点击 DOI 查看出版页"),
+  paperReadFull: l("Read full text →", "阅读全文 →"),
   photoLabel: l("life beyond work", "工作之外的生活"),
   // note overlay
   noteTitle: l("Leave Me a Note", "给我留句话"),

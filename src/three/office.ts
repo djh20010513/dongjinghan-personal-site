@@ -318,7 +318,9 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   // paper covers are portrait first-page screenshots — keep each cover's own aspect
   const POSTER_H = 2.28;
   const posterAspect = (i: number) => COVER_ASPECTS[i] || 0.75;
-  const posterMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  // toneMapped:false — paper pages must keep their native white/black contrast;
+  // ACES tone mapping would wash the page out to an unreadable grey ("曝光")
+  const posterMat = new THREE.MeshBasicMaterial({ color: 0xffffff, toneMapped: false });
   texLoader.load(PUBLISHED[0].poster!, (t) => {
     t.colorSpace = THREE.SRGBColorSpace;
     posterMat.map = t;
@@ -368,7 +370,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
   const focusPoster = () => focusCam([2.65, 2.7, -3.05], [2.65, 2.72, -5.4], "poster");
   makeInteractive(posterG, {
     id: "poster",
-    label: l("📽️ Research poster — click to zoom in", "📽️ 研究海报——点击放大"),
+    label: l("📽️ Paper screen — click to read", "📽️ 论文大屏——点击阅读"),
     action: focusPoster,
   });
 
@@ -399,7 +401,7 @@ export function createOffice(canvas: HTMLCanvasElement, cb: OfficeCallbacks): Of
     g.add(box(cw + 0.08, 1.14, 0.02, std(0xffffff, 0.6), 0, 0, 0));
     const t = texLoader.load(p.cover!);
     t.colorSpace = THREE.SRGBColorSpace;
-    const cover = new THREE.Mesh(new THREE.PlaneGeometry(cw, 1.06), new THREE.MeshBasicMaterial({ map: t }));
+    const cover = new THREE.Mesh(new THREE.PlaneGeometry(cw, 1.06), new THREE.MeshBasicMaterial({ map: t, toneMapped: false }));
     cover.position.z = 0.015;
     g.add(cover);
     makeInteractive(g, {

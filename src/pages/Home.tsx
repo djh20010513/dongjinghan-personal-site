@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import OfficeScene from "../components/OfficeScene";
 import {
-  AboutOverlay, AwardsOverlay, BrowseBar, ContactCard, EducationOverlay, InternshipPlayer, NoteOverlay, ResumeOverlay, SkillOverlay,
+  AboutOverlay, AwardsOverlay, BrowseBar, ContactCard, EducationOverlay, InternshipPlayer, NoteOverlay, PaperReader, ResumeOverlay, SkillOverlay,
 } from "../components/Panels";
 import type { OfficeHandles, ScreenRect, ViewMode } from "../three/office";
-import { INTERNSHIPS, PHOTOS, PUBLISHED } from "../data";
+import { INTERNSHIPS, PHOTOS } from "../data";
 import { STR, t, type L, type Lang } from "../i18n";
 import LoadingScreen from "../components/LoadingScreen";
 import "../App.css";
@@ -89,7 +89,8 @@ export default function Home() {
   }, []);
 
   const inOverlay = skillBranch !== null || noteOpen || aboutOpen || awardsOpen || eduOpen || resumeOpen;
-  const showBack = mode !== "home" && !inOverlay;
+  // poster mode has its own reader chrome (close button) — no global back button there
+  const showBack = mode !== "home" && mode !== "poster" && !inOverlay;
 
   return (
     <div className="office-root">
@@ -146,12 +147,12 @@ export default function Home() {
       {/* back button */}
       {showBack && <button className="back-btn" onClick={goBack}>{t(STR.back, lang)}</button>}
 
-      {/* poster browsing chrome */}
+      {/* poster browsing — the zoomed blackboard screen becomes a scrollable paper reader */}
       {mode === "poster" && (
-        <BrowseBar
-          icon="📽️" label={t(STR.posterLabel, lang)}
-          index={posterIdx} total={PUBLISHED.length}
+        <PaperReader
+          idx={posterIdx} lang={lang}
           onNav={(d) => handlesRef.current?.posterNav(d)}
+          onClose={goBack}
         />
       )}
 
